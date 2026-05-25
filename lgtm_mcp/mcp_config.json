@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "lgtm_mcp": {
+      "command": "python",
+      "args": [
+        "-m",
+        "lgtm_mcp.mcp_server"
+      ],
+      "env": {}
+    }
+  }
+}

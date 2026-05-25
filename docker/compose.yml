@@ -1,0 +1,11 @@
+services:
+  lgtm-mcp:
+    build: .
+    environment:
+      - ALERTMANAGER_URL
+      - LGTM_TOKEN
+      - TRANSPORT=streamable-http
+      - HOST=0.0.0.0
+      - PORT=8000
+    ports:
+      - "8000:8000"
