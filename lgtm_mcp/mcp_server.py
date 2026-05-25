@@ -1,17 +1,14 @@
-import warnings
-import logging
+"""CONCEPT:LGTM-002 Main FastMCP server and tool registration."""
 import os
 import sys
 from typing import Any
-from fastmcp import Context, FastMCP
-from fastmcp.utilities.logging import get_logger
-from pydantic import Field
-from starlette.requests import Request
-from starlette.responses import JSONResponse
 
 from agent_utilities.base_utilities import to_boolean
 from agent_utilities.mcp_utilities import create_mcp_server
 from dotenv import find_dotenv, load_dotenv
+from fastmcp.utilities.logging import get_logger
+from starlette.requests import Request
+from starlette.responses import JSONResponse
 
 from lgtm_mcp.mcp.mcp_alertmanager import register_alertmanager_tools
 from lgtm_mcp.mcp.mcp_grafana import register_grafana_tools
@@ -31,11 +28,10 @@ def get_mcp_instance() -> tuple[Any, ...]:
     async def health_check(request: Request) -> JSONResponse:
         return JSONResponse({"status": "OK"})
 
-    
     DEFAULT_ALERTMANAGERTOOL = to_boolean(os.getenv("ALERTMANAGERTOOL", "True"))
     if DEFAULT_ALERTMANAGERTOOL:
         register_alertmanager_tools(mcp)
-    
+
     DEFAULT_GRAFANATOOL = to_boolean(os.getenv("GRAFANATOOL", "True"))
     if DEFAULT_GRAFANATOOL:
         register_grafana_tools(mcp)

@@ -1,19 +1,31 @@
 from lgtm_mcp.api.api_client_base import ApiClientBase
 
+
 class Api(ApiClientBase):
     def get_alerts(self) -> list:
         """Get active alerts."""
         return self.request("GET", "/api/v2/alerts")
 
-    def create_silence(self, matchers: list, starts_at: str, ends_at: str, comment: str, created_by: str) -> dict:
+    def create_silence(
+        self,
+        matchers: list,
+        starts_at: str,
+        ends_at: str,
+        comment: str,
+        created_by: str,
+    ) -> dict:
         """Silence active alerts."""
-        return self.request("POST", "/api/v2/silences", data={
-            "matchers": matchers,
-            "startsAt": starts_at,
-            "endsAt": ends_at,
-            "comment": comment,
-            "createdBy": created_by
-        })
+        return self.request(
+            "POST",
+            "/api/v2/silences",
+            data={
+                "matchers": matchers,
+                "startsAt": starts_at,
+                "endsAt": ends_at,
+                "comment": comment,
+                "createdBy": created_by,
+            },
+        )
 
     def delete_silence(self, silence_id: str) -> dict:
         """Delete silence rule."""

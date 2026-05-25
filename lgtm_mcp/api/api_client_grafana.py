@@ -1,5 +1,6 @@
 from lgtm_mcp.api.api_client_base import ApiClientBase
 
+
 class Api(ApiClientBase):
     def get_dashboards(self) -> list:
         """Get Grafana dashboards."""
@@ -11,6 +12,12 @@ class Api(ApiClientBase):
 
     def query_datasource(self, datasource_id: int, query: str) -> dict:
         """Query a datasource."""
-        return self.request("POST", f"/api/tsdb/query", data={
-            "queries": [{"datasourceId": datasource_id, "rawSql": query, "format": "table"}]
-        })
+        return self.request(
+            "POST",
+            "/api/tsdb/query",
+            data={
+                "queries": [
+                    {"datasourceId": datasource_id, "rawSql": query, "format": "table"}
+                ]
+            },
+        )
