@@ -13,8 +13,13 @@ class ApiClientBase:
         username: str | None = None,
         password: str | None = None,
         verify: bool = True,
+        grafana_url: str | None = None,
     ):
+        import os
+
         self.base_url = base_url
+        self.alertmanager_url = base_url
+        self.grafana_url = grafana_url or os.getenv("GRAFANA_URL") or base_url
         self.token = token
         self.username = username
         self.password = password
@@ -39,7 +44,12 @@ class ApiClientBase:
         if endpoint.startswith("http"):
             url = endpoint
         else:
-            url = urljoin(self.base_url, endpoint)
+            base = (
+                self.alertmanager_url
+                if endpoint.startswith("/api/v2")
+                else self.grafana_url
+            )
+            url = urljoin(base, endpoint)
 
         headers = {"Content-Type": "application/json"}
         response = self._session.request(

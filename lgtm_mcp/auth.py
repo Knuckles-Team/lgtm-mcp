@@ -1,4 +1,5 @@
 """CONCEPT:LGTM-003 Identity credentials loader and session manager."""
+
 import os
 
 from agent_utilities.base_utilities import get_logger, to_boolean
@@ -11,6 +12,7 @@ logger = get_logger(__name__)
 def get_client() -> Api:
     """Get authenticated client for lgtm_mcp."""
     base_url = os.getenv("ALERTMANAGER_URL") or os.getenv("LGTM_MCP_BASE_URL", "")
+    grafana_url = os.getenv("GRAFANA_URL") or os.getenv("LGTM_MCP_BASE_URL", "")
     token = os.getenv("LGTM_TOKEN", "")
     username = os.getenv("LGTM_MCP_USERNAME", "")
     password = os.getenv("LGTM_MCP_PASSWORD", "")
@@ -19,6 +21,8 @@ def get_client() -> Api:
     if not base_url:
         # Default fallback for testing
         base_url = "http://localhost"
+    if not grafana_url:
+        grafana_url = "http://localhost"
 
     return Api(
         base_url=base_url,
@@ -26,4 +30,5 @@ def get_client() -> Api:
         username=username,
         password=password,
         verify=verify,
+        grafana_url=grafana_url,
     )

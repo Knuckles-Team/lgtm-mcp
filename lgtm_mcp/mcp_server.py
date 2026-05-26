@@ -1,4 +1,5 @@
 """Main FastMCP server and tool registration."""
+
 import os
 import sys
 from typing import Any
@@ -6,15 +7,120 @@ from typing import Any
 from agent_utilities.base_utilities import to_boolean
 from agent_utilities.mcp_utilities import create_mcp_server
 from dotenv import find_dotenv, load_dotenv
+from fastmcp import Context, FastMCP
+from fastmcp.dependencies import Depends
 from fastmcp.utilities.logging import get_logger
+from pydantic import Field
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
-from lgtm_mcp.mcp.mcp_alertmanager import register_alertmanager_tools
-from lgtm_mcp.mcp.mcp_grafana import register_grafana_tools
+from lgtm_mcp.auth import get_client
 
 __version__ = "0.15.0"
 logger = get_logger(name="lgtm_mcp")
+
+
+def register_alertmanager_tools(mcp: FastMCP):
+    """Register LGTM MCP Alertmanager tools.
+    CONCEPT:LGTM-002
+    """
+
+    @mcp.tool(tags={"alertmanager"})
+    async def lgtm_mcp_alertmanager(
+        action: str = Field(
+            description=(
+                "Action to perform. Must be one of: "
+                "'get_status', 'get_receivers', 'get_silences', 'post_silences', "
+                "'create_silence', 'get_silence', 'delete_silence', 'get_alerts', "
+                "'post_alerts', 'create_alerts', 'get_alert_groups'"
+            )
+        ),
+        params_json: str = Field(
+            default="{}",
+            description="JSON string of parameters matching the method signature.",
+        ),
+        client=Depends(get_client),
+        ctx: Context | None = Field(default=None, description="MCP context"),
+    ) -> Any:
+        """Manage LGTM MCP Alertmanager operations."""
+        if ctx:
+            await ctx.info(f"Executing Alertmanager operation '{action}'...")
+        import json
+
+        try:
+            kwargs = json.loads(params_json)
+        except Exception as e:
+            return {"error": f"Invalid params_json: {e}"}
+
+        kwargs = {k: v for k, v in kwargs.items() if v is not None}
+
+        if action == "get_status":
+            return client.get_status(**kwargs)
+        if action == "get_receivers":
+            return client.get_receivers(**kwargs)
+        if action == "get_silences":
+            return client.get_silences(**kwargs)
+        if action == "post_silences":
+            return client.post_silences(**kwargs)
+        if action == "create_silence":
+            return client.create_silence(**kwargs)
+        if action == "get_silence":
+            return client.get_silence(**kwargs)
+        if action == "delete_silence":
+            return client.delete_silence(**kwargs)
+        if action == "get_alerts":
+            return client.get_alerts(**kwargs)
+        if action == "post_alerts":
+            return client.post_alerts(**kwargs)
+        if action == "create_alerts":
+            return client.create_alerts(**kwargs)
+        if action == "get_alert_groups":
+            return client.get_alert_groups(**kwargs)
+
+        raise ValueError(f"Unknown Alertmanager action: {action}")
+
+
+def register_grafana_tools(mcp: FastMCP):
+    """Register LGTM MCP Grafana tools.
+    CONCEPT:LGTM-002
+    """
+
+    @mcp.tool(tags={"grafana"})
+    async def lgtm_mcp_grafana(
+        action: str = Field(
+            description=(
+                "Action to perform. Must be one of: "
+                "'get_dashboards', 'create_dashboard', 'query_datasource'"
+            )
+        ),
+        params_json: str = Field(
+            default="{}",
+            description="JSON string of parameters matching the method signature.",
+        ),
+        client=Depends(get_client),
+        ctx: Context | None = Field(default=None, description="MCP context"),
+    ) -> Any:
+        """Manage LGTM MCP Grafana operations."""
+        if ctx:
+            await ctx.info(f"Executing Grafana operation '{action}'...")
+        import json
+
+        try:
+            kwargs = json.loads(params_json)
+        except Exception as e:
+            return {"error": f"Invalid params_json: {e}"}
+
+        kwargs = {k: v for k, v in kwargs.items() if v is not None}
+
+        if action == "get_dashboards":
+            return client.get_dashboards(**kwargs)
+        if action == "create_dashboard":
+            return client.create_dashboard(**kwargs)
+        if action == "query_datasource":
+            return client.query_datasource(**kwargs)
+
+        raise ValueError(f"Unknown Grafana action: {action}")
+
 
 def get_mcp_instance() -> tuple[Any, ...]:
     load_dotenv(find_dotenv())
@@ -40,6 +146,7 @@ def get_mcp_instance() -> tuple[Any, ...]:
         mcp.add_middleware(mw)
     return mcp, args, middlewares
 
+
 def mcp_server() -> None:
     mcp, args, middlewares = get_mcp_instance()
     print(f"LGTM MCP MCP v{__version__}", file=sys.stderr)
@@ -49,6 +156,7 @@ def mcp_server() -> None:
         mcp.run(transport="streamable-http", host=args.host, port=args.port)
     else:
         mcp.run(transport="stdio")
+
 
 if __name__ == "__main__":
     mcp_server()
