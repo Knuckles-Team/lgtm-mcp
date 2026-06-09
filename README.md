@@ -6,6 +6,10 @@
 
 LGTM Stack (Alertmanager and Grafana) system observability orchestrator. Built with the highest architectural standards, incorporating dynamic facades, custom API routing, and FastMCP tool decoration.
 
+> **Documentation** — Installation, deployment, usage across the API and MCP
+> interfaces, and guidance for provisioning the LGTM observability stack are maintained
+> in the [official documentation](https://knuckles-team.github.io/lgtm-mcp/).
+
 ## Table of Contents
 - [Overview](#overview)
 - [Features](#features)
@@ -15,6 +19,7 @@ LGTM Stack (Alertmanager and Grafana) system observability orchestrator. Built w
 - [MCP Tools](#mcp-tools)
 - [Architecture](#architecture)
 - [Deployment](#deployment)
+- [Documentation](#documentation)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -158,6 +163,23 @@ A standard compose structure is provided inside the `docker/` folder. Build and 
 ```bash
 docker compose -f docker/compose.yml up --build -d
 ```
+
+---
+
+## Documentation
+
+The complete documentation is published as the
+[official documentation site](https://knuckles-team.github.io/lgtm-mcp/) and is the
+recommended reference for installation, deployment, and day-to-day operation.
+
+| Page | Contents |
+|---|---|
+| [Installation](https://knuckles-team.github.io/lgtm-mcp/installation/) | pip, source, extras, prebuilt Docker image |
+| [Deployment](https://knuckles-team.github.io/lgtm-mcp/deployment/) | run the MCP server, the agent server, Compose, Caddy + Technitium, env config |
+| [Usage](https://knuckles-team.github.io/lgtm-mcp/usage/) | the MCP tools and the `Api` Python client |
+| [Backing Platform](https://knuckles-team.github.io/lgtm-mcp/platform/) | deploy the LGTM observability stack with Docker |
+| [Overview](https://knuckles-team.github.io/lgtm-mcp/overview/) | architecture and the dynamic facade |
+| [Concepts](https://knuckles-team.github.io/lgtm-mcp/concepts/) | concept registry (`CONCEPT:LGTM-*`) |
 
 ---
 
