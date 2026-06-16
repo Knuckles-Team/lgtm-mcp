@@ -5,7 +5,7 @@ import sys
 from typing import Any
 
 from agent_utilities.base_utilities import to_boolean
-from agent_utilities.mcp_utilities import create_mcp_server
+from agent_utilities.mcp_utilities import create_mcp_server, resolve_action
 from dotenv import find_dotenv, load_dotenv
 from fastmcp import Context, FastMCP
 from fastmcp.dependencies import Depends
@@ -18,6 +18,21 @@ from lgtm_mcp.auth import get_client
 
 __version__ = "0.15.0"
 logger = get_logger(name="lgtm_mcp")
+
+
+ALERTMANAGER_ACTIONS = (
+    "get_status",
+    "get_receivers",
+    "get_silences",
+    "post_silences",
+    "create_silence",
+    "get_silence",
+    "delete_silence",
+    "get_alerts",
+    "post_alerts",
+    "create_alerts",
+    "get_alert_groups",
+)
 
 
 def register_alertmanager_tools(mcp: FastMCP):
@@ -54,6 +69,11 @@ def register_alertmanager_tools(mcp: FastMCP):
 
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
 
+        resolved = resolve_action(action, ALERTMANAGER_ACTIONS, service="lgtm-mcp")
+        if isinstance(resolved, dict):
+            return resolved
+        action = resolved
+
         if action == "get_status":
             return client.get_status(**kwargs)
         if action == "get_receivers":
@@ -78,6 +98,13 @@ def register_alertmanager_tools(mcp: FastMCP):
             return client.get_alert_groups(**kwargs)
 
         raise ValueError(f"Unknown Alertmanager action: {action}")
+
+
+GRAFANA_ACTIONS = (
+    "get_dashboards",
+    "create_dashboard",
+    "query_datasource",
+)
 
 
 def register_grafana_tools(mcp: FastMCP):
@@ -111,6 +138,11 @@ def register_grafana_tools(mcp: FastMCP):
             return {"error": f"Invalid params_json: {e}"}
 
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
+
+        resolved = resolve_action(action, GRAFANA_ACTIONS, service="lgtm-mcp")
+        if isinstance(resolved, dict):
+            return resolved
+        action = resolved
 
         if action == "get_dashboards":
             return client.get_dashboards(**kwargs)
