@@ -5,7 +5,11 @@ import sys
 from typing import Any
 
 from agent_utilities.base_utilities import to_boolean
-from agent_utilities.mcp_utilities import create_mcp_server, resolve_action
+from agent_utilities.mcp_utilities import (
+    create_mcp_server,
+    resolve_action,
+    run_blocking,
+)
 from dotenv import find_dotenv, load_dotenv
 from fastmcp import Context, FastMCP
 from fastmcp.dependencies import Depends
@@ -75,27 +79,27 @@ def register_alertmanager_tools(mcp: FastMCP):
         action = resolved
 
         if action == "get_status":
-            return client.get_status(**kwargs)
+            return await run_blocking(client.get_status, **kwargs)
         if action == "get_receivers":
-            return client.get_receivers(**kwargs)
+            return await run_blocking(client.get_receivers, **kwargs)
         if action == "get_silences":
-            return client.get_silences(**kwargs)
+            return await run_blocking(client.get_silences, **kwargs)
         if action == "post_silences":
-            return client.post_silences(**kwargs)
+            return await run_blocking(client.post_silences, **kwargs)
         if action == "create_silence":
-            return client.create_silence(**kwargs)
+            return await run_blocking(client.create_silence, **kwargs)
         if action == "get_silence":
-            return client.get_silence(**kwargs)
+            return await run_blocking(client.get_silence, **kwargs)
         if action == "delete_silence":
-            return client.delete_silence(**kwargs)
+            return await run_blocking(client.delete_silence, **kwargs)
         if action == "get_alerts":
-            return client.get_alerts(**kwargs)
+            return await run_blocking(client.get_alerts, **kwargs)
         if action == "post_alerts":
-            return client.post_alerts(**kwargs)
+            return await run_blocking(client.post_alerts, **kwargs)
         if action == "create_alerts":
-            return client.create_alerts(**kwargs)
+            return await run_blocking(client.create_alerts, **kwargs)
         if action == "get_alert_groups":
-            return client.get_alert_groups(**kwargs)
+            return await run_blocking(client.get_alert_groups, **kwargs)
 
         raise ValueError(f"Unknown Alertmanager action: {action}")
 
@@ -145,11 +149,11 @@ def register_grafana_tools(mcp: FastMCP):
         action = resolved
 
         if action == "get_dashboards":
-            return client.get_dashboards(**kwargs)
+            return await run_blocking(client.get_dashboards, **kwargs)
         if action == "create_dashboard":
-            return client.create_dashboard(**kwargs)
+            return await run_blocking(client.create_dashboard, **kwargs)
         if action == "query_datasource":
-            return client.query_datasource(**kwargs)
+            return await run_blocking(client.query_datasource, **kwargs)
 
         raise ValueError(f"Unknown Grafana action: {action}")
 
