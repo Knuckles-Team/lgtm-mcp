@@ -121,11 +121,17 @@ A local template is supplied inside [.env.example](.env.example). Copy this file
 
 The following declarative FastMCP tools are registered and available to upstream AI agents:
 
-| Tool Name | Description | Parameters |
-|-----------|-------------|------------|
-| `get_alerts` | Retrieve list of firing alerts from Alertmanager | None |
-| `create_silence` | Create a new alert silence | `matchers: list, duration_hours: int = 2` |
-| `get_dashboards` | Retrieve list of Grafana dashboards | None |
+Auto-generated — do not edit between the markers below.
+
+<!-- MCP-TOOLS-TABLE:START -->
+
+| MCP Tool | Toggle Env Var | Description |
+|----------|----------------|-------------|
+| `lgtm_mcp_alertmanager` | `ALERTMANAGERTOOL` | Manage LGTM MCP Alertmanager operations. |
+| `lgtm_mcp_grafana` | `GRAFANATOOL` | Manage LGTM MCP Grafana operations. |
+
+_2 action-routed tools (default `MCP_TOOL_MODE=condensed`). Each is enabled unless its toggle is set false; set `MCP_TOOL_MODE=verbose` (or `both`) for the 1:1 per-operation surface. Auto-generated — do not edit._
+<!-- MCP-TOOLS-TABLE:END -->
 
 See [docs/overview.md](docs/overview.md) or [docs/concepts.md](docs/concepts.md) for deeper operational examples.
 
