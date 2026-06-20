@@ -1,13 +1,12 @@
 """Main FastMCP server and tool registration."""
 
-import os
 import sys
 from typing import Any
 
-from agent_utilities.base_utilities import to_boolean
 from agent_utilities.mcp_utilities import (
     create_mcp_server,
     load_config,
+    register_tool_surface,
     resolve_action,
     run_blocking,
 )
@@ -18,6 +17,7 @@ from pydantic import Field
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
+from lgtm_mcp.api_client import Api
 from lgtm_mcp.auth import get_client
 
 __version__ = "0.15.0"
@@ -170,13 +170,14 @@ def get_mcp_instance() -> tuple[Any, ...]:
     async def health_check(request: Request) -> JSONResponse:
         return JSONResponse({"status": "OK"})
 
-    DEFAULT_ALERTMANAGERTOOL = to_boolean(os.getenv("ALERTMANAGERTOOL", "True"))
-    if DEFAULT_ALERTMANAGERTOOL:
-        register_alertmanager_tools(mcp)
-
-    DEFAULT_GRAFANATOOL = to_boolean(os.getenv("GRAFANATOOL", "True"))
-    if DEFAULT_GRAFANATOOL:
-        register_grafana_tools(mcp)
+    registered_tags = register_tool_surface(
+        mcp,
+        client_cls=Api,
+        get_client=get_client,
+        service="lgtm-mcp",
+        tools_module=sys.modules[__name__],
+    )
+    logger.info(f"Registered condensed tool surfaces: {registered_tags}")
 
     for mw in middlewares:
         mcp.add_middleware(mw)
