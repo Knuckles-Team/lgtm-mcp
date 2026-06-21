@@ -28,10 +28,10 @@ lgtm-mcp = "lgtm_mcp.mcp_server:mcp_server"
 lgtm-agent = "lgtm_mcp.agent_server:agent_server"
 
 [project.entry-points."agent_utilities.skill_providers"]
-modular-contrib = "lgtm_mcp.skills"
+lgtm-mcp = "lgtm_mcp.skills"
 
 [project.entry-points."agent_utilities.prompt_providers"]
-modular-contrib = "lgtm_mcp.prompts"
+lgtm-mcp = "lgtm_mcp.prompts"
 
 [tool.setuptools]
 include-package-data = true
