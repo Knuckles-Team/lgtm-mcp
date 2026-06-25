@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   lgtm-mcp:
-    image: knucklessg1/lgtm-mcp:latest
+    image: knucklessg1/lgtm-mcp:mcp
     container_name: lgtm-mcp
     hostname: lgtm-mcp
     restart: always
