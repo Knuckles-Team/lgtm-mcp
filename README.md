@@ -148,6 +148,10 @@ python -m lgtm_mcp.mcp_server
 | `ALERTMANAGER_URL` | `http://localhost:9093` | Prometheus Alertmanager server API URL |
 | `GRAFANA_URL` | `http://localhost:3000` | Grafana server API endpoint |
 | `LGTM_TOKEN` | `your_grafana_api_token` | Grafana admin API Key or Service Token |
+| `LGTM_MCP_BASE_URL` | `http://localhost` | Fallback base URL used when ALERTMANAGER_URL / GRAFANA_URL are unset |
+| `LGTM_MCP_USERNAME` | — | Basic-auth username (alternative to LGTM_TOKEN) |
+| `LGTM_MCP_PASSWORD` | — | Basic-auth password (alternative to LGTM_TOKEN) |
+| `LGTM_MCP_SSL_VERIFY` | `True` | Verify TLS certificates on outbound API calls |
 | `ALERTMANAGERTOOL` | `True` | MCP tools table (condensed action-routed surface). |
 | `GRAFANATOOL` | `True` |  |
 
@@ -178,7 +182,7 @@ python -m lgtm_mcp.mcp_server
 | `MODEL_ID` | `gpt-4o` | Model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_5 package + 22 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_9 package + 22 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 
@@ -226,12 +230,38 @@ Auto-generated — do not edit between the markers below.
 
 <!-- MCP-TOOLS-TABLE:START -->
 
+#### Condensed action-routed tools (default — `MCP_TOOL_MODE=condensed`)
+
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
 | `lgtm_mcp_alertmanager` | `ALERTMANAGERTOOL` | Manage LGTM MCP Alertmanager operations. |
 | `lgtm_mcp_grafana` | `GRAFANATOOL` | Manage LGTM MCP Grafana operations. |
 
-_2 action-routed tools (default `MCP_TOOL_MODE=condensed`). Each is enabled unless its toggle is set false; set `MCP_TOOL_MODE=verbose` (or `both`) for the 1:1 per-operation surface. Auto-generated — do not edit._
+#### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)
+
+<details>
+<summary>14 per-operation tools — one per public API method (click to expand)</summary>
+
+| MCP Tool | Toggle Env Var | Description |
+|----------|----------------|-------------|
+| `lgtm_create_alerts` | `APITOOL` | Create new Alerts (Helper method matching post_alerts). |
+| `lgtm_create_dashboard` | `APITOOL` | Create dashboard. |
+| `lgtm_create_silence` | `APITOOL` | Silence active alerts (Helper method for backward compatibility). |
+| `lgtm_delete_silence` | `APITOOL` | Delete silence rule. |
+| `lgtm_get_alert_groups` | `APITOOL` | Get a list of alert groups. |
+| `lgtm_get_alerts` | `APITOOL` | Get a list of alerts. |
+| `lgtm_get_dashboards` | `APITOOL` | Get Grafana dashboards. |
+| `lgtm_get_receivers` | `APITOOL` | Get list of all receivers (notification integrations). |
+| `lgtm_get_silence` | `APITOOL` | Get a silence by its ID. |
+| `lgtm_get_silences` | `APITOOL` | Get a list of silences. |
+| `lgtm_get_status` | `APITOOL` | Get current status of an Alertmanager instance and its cluster. |
+| `lgtm_post_alerts` | `APITOOL` | Create new Alerts. |
+| `lgtm_post_silences` | `APITOOL` | Post a new silence or update an existing one. |
+| `lgtm_query_datasource` | `APITOOL` | Query a datasource. |
+
+</details>
+
+_2 action-routed tool(s) (default) · 14 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (`condensed` default · `verbose` 1:1 · `both`). Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
 
 See [docs/overview.md](docs/overview.md) or [docs/concepts.md](docs/concepts.md) for deeper operational examples.
