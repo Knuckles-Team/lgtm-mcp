@@ -6,7 +6,9 @@
         "-m",
         "lgtm_mcp.mcp_server"
       ],
-      "env": {}
+      "env": {
+        "MCP_TOOL_MODE": "condensed"
+      }
     }
   }
 }
