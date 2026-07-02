@@ -7,7 +7,15 @@
         "lgtm_mcp.mcp_server"
       ],
       "env": {
-        "MCP_TOOL_MODE": "condensed"
+        "MCP_TOOL_MODE": "condensed",
+        "ALERTMANAGERTOOL": "True",
+        "ALERTMANAGER_URL": "http://localhost:9093",
+        "GRAFANATOOL": "True",
+        "GRAFANA_URL": "http://localhost:3000",
+        "LGTM_MCP_BASE_URL": "http://localhost",
+        "LGTM_MCP_PASSWORD": "",
+        "LGTM_MCP_USERNAME": "",
+        "LGTM_TOKEN": "your_grafana_api_token"
       }
     }
   }
