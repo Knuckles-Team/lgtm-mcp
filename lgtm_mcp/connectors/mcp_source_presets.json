@@ -1,0 +1,15 @@
+{
+  "_comment": "Tier-1 mcp_tool source presets for lgtm-mcp (AU-KG.ingest.mcp-tool-connector). Syncs Grafana dashboards into the KG as dashboard documents via the lgtm-mcp MCP server. Contributed presets win over the central MCP_TOOL_PRESETS. Native typed-node ingestion (lgtm_ingest_dashboards / lgtm_ingest_alerts) is the richer path; this preset is the generic doc-sync fallback.",
+  "lgtm-dashboards": {
+    "server": "lgtm-mcp",
+    "tool": "lgtm_mcp_grafana",
+    "action": "get_dashboards",
+    "records_path": "",
+    "id_field": "uid",
+    "title_field": "title",
+    "text_field": "title",
+    "updated_field": "",
+    "pagination": "none",
+    "doc_type": "dashboard"
+  }
+}

@@ -8,6 +8,7 @@
 @prefix : <http://knuckles.team/kg#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 :Generation a owl:Class ;
     rdfs:label "LLM Generation" ;
@@ -42,4 +43,70 @@ samples are :HeartbeatStat (CONCEPT:KG-2.159).""" ;
     rdfs:label "Observability & Streaming Ontology" ;
     rdfs:comment "Ops/observability node types (CONCEPT:KG-2.9 / KG-2.156 / KG-2.159)." ;
     owl:imports <http://knuckles.team/kg> .
+
+# --- LGTM / Alertmanager ingestion classes (CONCEPT:AU-KG.ingest.enterprise-source-extractor) ---
+# The lgtm-mcp connector natively ingests Grafana dashboards and Alertmanager
+# alert state into the KG. :Dashboard / :Panel / :Alert / :DataSource are federated
+# from the sibling grafana.ttl module; the classes below add the Alertmanager
+# firing/silencing surface that lgtm-mcp reads (alerts, alert groups, silences,
+# receivers).
+
+:AlertGroup a owl:Class ;
+    rdfs:label "Alert Group" ;
+    rdfs:comment """An Alertmanager grouping of alerts that share a label set / route
+(lgtm_mcp_alertmanager get_alert_groups). Groups active :Alert instances.""" ;
+    rdfs:subClassOf :System .
+
+:Silence a owl:Class ;
+    rdfs:label "Silence" ;
+    rdfs:comment """An Alertmanager silence: a time-bounded matcher set that mutes
+matching :Alert notifications (lgtm_mcp_alertmanager get_silences / create_silence).""" ;
+    rdfs:subClassOf :System .
+
+:Receiver a owl:Class ;
+    rdfs:label "Receiver" ;
+    rdfs:comment """An Alertmanager receiver — a notification integration (email,
+Slack, PagerDuty, webhook) that fired :Alert instances are routed to
+(lgtm_mcp_alertmanager get_receivers).""" ;
+    rdfs:subClassOf :System .
+
+:alertState a owl:DatatypeProperty ;
+    rdfs:label "alert state" ;
+    rdfs:comment "The processing state of an :Alert (active, suppressed, unprocessed)." ;
+    rdfs:domain :Alert ;
+    rdfs:range xsd:string .
+
+:severity a owl:DatatypeProperty ;
+    rdfs:label "severity" ;
+    rdfs:comment "The severity label of an :Alert (e.g. critical, warning, info)." ;
+    rdfs:domain :Alert ;
+    rdfs:range xsd:string .
+
+:startsAt a owl:DatatypeProperty ;
+    rdfs:label "starts at" ;
+    rdfs:comment "ISO-8601 timestamp an :Alert or :Silence became active." ;
+    rdfs:range xsd:dateTime .
+
+:endsAt a owl:DatatypeProperty ;
+    rdfs:label "ends at" ;
+    rdfs:comment "ISO-8601 timestamp an :Alert or :Silence stops being active." ;
+    rdfs:range xsd:dateTime .
+
+:silenceComment a owl:DatatypeProperty ;
+    rdfs:label "silence comment" ;
+    rdfs:comment "Free-text reason recorded on a :Silence." ;
+    rdfs:domain :Silence ;
+    rdfs:range xsd:string .
+
+:routedTo a owl:ObjectProperty ;
+    rdfs:label "routed to" ;
+    rdfs:comment "Links a fired :Alert to the :Receiver its notification was routed to." ;
+    rdfs:domain :Alert ;
+    rdfs:range :Receiver .
+
+:silencedBy a owl:ObjectProperty ;
+    rdfs:label "silenced by" ;
+    rdfs:comment "Links an :Alert to the :Silence currently muting it." ;
+    rdfs:domain :Alert ;
+    rdfs:range :Silence .
 

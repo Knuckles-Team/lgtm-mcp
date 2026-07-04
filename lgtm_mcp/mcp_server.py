@@ -24,6 +24,28 @@ __version__ = "0.15.0"
 logger = get_logger(name="lgtm_mcp")
 
 
+def _auto_ingest_dashboards(result: Any) -> None:
+    """Best-effort native KG ingest of a get_dashboards result (no-op without engine)."""
+    try:
+        from lgtm_mcp.kg_ingest import ingest_dashboards
+
+        records = result if isinstance(result, list) else []
+        ingest_dashboards([r for r in records if isinstance(r, dict)])
+    except Exception as e:  # noqa: BLE001 — ingestion is best-effort
+        logger.debug(f"auto-ingest dashboards skipped: {e}")
+
+
+def _auto_ingest_alerts(result: Any) -> None:
+    """Best-effort native KG ingest of a get_alerts result (no-op without engine)."""
+    try:
+        from lgtm_mcp.kg_ingest import ingest_alerts
+
+        records = result if isinstance(result, list) else []
+        ingest_alerts([r for r in records if isinstance(r, dict)])
+    except Exception as e:  # noqa: BLE001 — ingestion is best-effort
+        logger.debug(f"auto-ingest alerts skipped: {e}")
+
+
 ALERTMANAGER_ACTIONS = (
     "get_status",
     "get_receivers",
@@ -93,7 +115,9 @@ def register_alertmanager_tools(mcp: FastMCP):
         if action == "delete_silence":
             return await run_blocking(client.delete_silence, **kwargs)
         if action == "get_alerts":
-            return await run_blocking(client.get_alerts, **kwargs)
+            result = await run_blocking(client.get_alerts, **kwargs)
+            _auto_ingest_alerts(result)
+            return result
         if action == "post_alerts":
             return await run_blocking(client.post_alerts, **kwargs)
         if action == "create_alerts":
@@ -102,6 +126,34 @@ def register_alertmanager_tools(mcp: FastMCP):
             return await run_blocking(client.get_alert_groups, **kwargs)
 
         raise ValueError(f"Unknown Alertmanager action: {action}")
+
+    @mcp.tool(tags={"alertmanager", "kg"})
+    async def lgtm_ingest_alerts(
+        params_json: str = Field(
+            default="{}",
+            description="JSON string of get_alerts filters (e.g. active, silenced, filter).",
+        ),
+        client=Depends(get_client),
+        ctx: Context | None = None,
+    ) -> Any:
+        """Natively ingest Alertmanager alerts into epistemic-graph as typed :Alert nodes.
+
+        Lists alerts via the Alertmanager API and pushes them (with their :Receiver +
+        :routedTo links) into the knowledge graph via the fast engine client.
+        Best-effort: ``ingested`` is ``None`` when no engine is reachable.
+        CONCEPT:AU-KG.ingest.enterprise-source-extractor.
+        """
+        import json as _json
+
+        from lgtm_mcp.kg_ingest import ingest_alerts
+
+        kwargs = _json.loads(params_json) if params_json else {}
+        kwargs = {k: v for k, v in kwargs.items() if v is not None}
+        result = await run_blocking(client.get_alerts, **kwargs)
+        records = result if isinstance(result, list) else []
+        alerts = [r for r in records if isinstance(r, dict)]
+        ingested = ingest_alerts(alerts)
+        return {"listed": len(alerts), "ingested": ingested}
 
 
 GRAFANA_ACTIONS = (
@@ -149,13 +201,38 @@ def register_grafana_tools(mcp: FastMCP):
         action = resolved
 
         if action == "get_dashboards":
-            return await run_blocking(client.get_dashboards, **kwargs)
+            result = await run_blocking(client.get_dashboards, **kwargs)
+            _auto_ingest_dashboards(result)
+            return result
         if action == "create_dashboard":
             return await run_blocking(client.create_dashboard, **kwargs)
         if action == "query_datasource":
             return await run_blocking(client.query_datasource, **kwargs)
 
         raise ValueError(f"Unknown Grafana action: {action}")
+
+    @mcp.tool(tags={"grafana", "kg"})
+    async def lgtm_ingest_dashboards(
+        params_json: str = Field(
+            default="{}",
+            description="Reserved for future get_dashboards filters (currently none).",
+        ),
+        client=Depends(get_client),
+        ctx: Context | None = None,
+    ) -> Any:
+        """Natively ingest Grafana dashboards into epistemic-graph as typed :Dashboard nodes.
+
+        Lists dashboards via the Grafana search API and pushes them into the knowledge
+        graph via the fast engine client. Best-effort: ``ingested`` is ``None`` when no
+        engine is reachable. CONCEPT:AU-KG.ingest.enterprise-source-extractor.
+        """
+        from lgtm_mcp.kg_ingest import ingest_dashboards
+
+        result = await run_blocking(client.get_dashboards)
+        records = result if isinstance(result, list) else []
+        dashboards = [r for r in records if isinstance(r, dict)]
+        ingested = ingest_dashboards(dashboards)
+        return {"listed": len(dashboards), "ingested": ingested}
 
 
 def get_mcp_instance() -> tuple[Any, ...]:
