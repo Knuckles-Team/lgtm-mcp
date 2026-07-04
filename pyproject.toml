@@ -33,6 +33,14 @@ lgtm-mcp = "lgtm_mcp.skills"
 [project.entry-points."agent_utilities.prompt_providers"]
 lgtm-mcp = "lgtm_mcp.prompts"
 
+# CONCEPT:KG-2.325 — federate this package's OWL/RDF ontology modules into the
+# agent-utilities hub (http://knuckles.team/kg/grafana and
+# http://knuckles.team/kg/observability). The loader globs every *.ttl in the
+# module's ontology/ dir, so one entry-point covers both. Resolved via
+# iter_provider_dirs like the skill/prompt providers.
+[project.entry-points."agent_utilities.ontology_providers"]
+lgtm-mcp = "lgtm_mcp.ontology"
+
 [tool.setuptools]
 include-package-data = true
 
@@ -49,7 +57,7 @@ check_untyped_defs = true
 dev = [ "pytest-timeout>=2.4.0",]
 
 [tool.setuptools.package-data]
-lgtm_mcp = [ "mcp_config.json", "agent_data/**", "prompts/**", "skills/**",]
+lgtm_mcp = [ "mcp_config.json", "agent_data/**", "prompts/**", "skills/**", "ontology/**",]
 
 [tool.ruff.lint]
 select = [ "E", "F", "I", "UP", "B",]
