@@ -18,7 +18,7 @@ DEFAULT_AGENT_SYSTEM_PROMPT = None
 
 def agent_server():
     """Start graph-based Pydantic AI agent server.
-    CONCEPT:LGTM-007
+    CONCEPT:LG-OS.config.lgtm
     """
     from agent_utilities import (
         build_system_prompt_from_workspace,

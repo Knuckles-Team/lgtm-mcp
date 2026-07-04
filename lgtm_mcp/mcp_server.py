@@ -41,7 +41,7 @@ ALERTMANAGER_ACTIONS = (
 
 def register_alertmanager_tools(mcp: FastMCP):
     """Register LGTM MCP Alertmanager tools.
-    CONCEPT:LGTM-002
+    CONCEPT:LG-OS.governance.lgtm-2
     """
 
     @mcp.tool(tags={"alertmanager"})
@@ -113,7 +113,7 @@ GRAFANA_ACTIONS = (
 
 def register_grafana_tools(mcp: FastMCP):
     """Register LGTM MCP Grafana tools.
-    CONCEPT:LGTM-002
+    CONCEPT:LG-OS.governance.lgtm-2
     """
 
     @mcp.tool(tags={"grafana"})

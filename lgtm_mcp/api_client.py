@@ -1,4 +1,4 @@
-"""CONCEPT:LGTM-001 Dynamic client facade orchestration and resource mappings."""
+"""CONCEPT:LG-OS.governance.lgtm Dynamic client facade orchestration and resource mappings."""
 
 #!/usr/bin/env python
 from lgtm_mcp.api.api_client_alertmanager import Api as AlertmanagerApi
