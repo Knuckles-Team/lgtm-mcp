@@ -1,5 +1,6 @@
 ---
 name: lgtm-alertmanager-alerts
+skill_type: skill
 description: >-
   Alertmanager alert and silence operations over the lgtm-mcp MCP server — list
   active/silenced alerts and alert groups, read cluster status and receivers, and

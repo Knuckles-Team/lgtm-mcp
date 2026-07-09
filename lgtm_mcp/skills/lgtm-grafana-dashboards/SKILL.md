@@ -1,5 +1,6 @@
 ---
 name: lgtm-grafana-dashboards
+skill_type: skill
 description: >-
   Grafana dashboard and datasource operations over the lgtm-mcp MCP server — search
   existing dashboards, create a dashboard from a JSON model, and run ad-hoc queries
