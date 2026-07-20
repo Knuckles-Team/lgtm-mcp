@@ -1,0 +1,6 @@
+{
+  "connector": "lgtm-mcp",
+  "current_ontology_source": "grafana",
+  "migrations": [],
+  "schema_version": "1"
+}

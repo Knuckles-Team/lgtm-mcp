@@ -3,13 +3,11 @@
 import sys
 from typing import Any
 
-from agent_utilities.mcp_utilities import (
-    create_mcp_server,
-    load_config,
-    register_tool_surface,
-    resolve_action,
-    run_blocking,
-)
+from agent_utilities.core.config import load_config
+from agent_utilities.mcp.action_dispatch import resolve_action
+from agent_utilities.mcp.concurrency import run_blocking
+from agent_utilities.mcp.server_factory import create_mcp_server
+from agent_utilities.mcp.verbose_tools import register_tool_surface
 from fastmcp import Context, FastMCP
 from fastmcp.dependencies import Depends
 from fastmcp.utilities.logging import get_logger
@@ -32,7 +30,7 @@ def _auto_ingest_dashboards(result: Any) -> None:
         records = result if isinstance(result, list) else []
         ingest_dashboards([r for r in records if isinstance(r, dict)])
     except Exception as e:  # noqa: BLE001 — ingestion is best-effort
-        logger.debug(f"auto-ingest dashboards skipped: {e}")
+        logger.debug("Operation failed: error_type=%s", type(e).__name__)
 
 
 def _auto_ingest_alerts(result: Any) -> None:
@@ -43,7 +41,7 @@ def _auto_ingest_alerts(result: Any) -> None:
         records = result if isinstance(result, list) else []
         ingest_alerts([r for r in records if isinstance(r, dict)])
     except Exception as e:  # noqa: BLE001 — ingestion is best-effort
-        logger.debug(f"auto-ingest alerts skipped: {e}")
+        logger.debug("Operation failed: error_type=%s", type(e).__name__)
 
 
 ALERTMANAGER_ACTIONS = (
@@ -91,7 +89,7 @@ def register_alertmanager_tools(mcp: FastMCP):
         try:
             kwargs = json.loads(params_json)
         except Exception as e:
-            return {"error": f"Invalid params_json: {e}"}
+            return {"error": "Operation failed"}
 
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
 
@@ -191,7 +189,7 @@ def register_grafana_tools(mcp: FastMCP):
         try:
             kwargs = json.loads(params_json)
         except Exception as e:
-            return {"error": f"Invalid params_json: {e}"}
+            return {"error": "Operation failed"}
 
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
 
@@ -254,7 +252,7 @@ def get_mcp_instance() -> tuple[Any, ...]:
         service="lgtm-mcp",
         tools_module=sys.modules[__name__],
     )
-    logger.info(f"Registered condensed tool surfaces: {registered_tags}")
+    logger.info("Registered condensed tool surfaces: count=%d", len(registered_tags))
 
     for mw in middlewares:
         mcp.add_middleware(mw)

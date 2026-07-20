@@ -68,15 +68,15 @@ Pick the extra that matches what you want to run:
 
 | Extra | Installs | Use when |
 |-------|----------|----------|
-| `lgtm-mcp[mcp]` | Slim MCP server only (`agent-utilities[mcp]` — FastMCP/FastAPI) | You only run the **MCP server** (smallest install / image) |
-| `lgtm-mcp[agent]` | Full agent runtime (`agent-utilities[agent,logfire]` — Pydantic AI + the epistemic-graph engine) | You run the **integrated agent** |
+| `lgtm-mcp[mcp]` | Connector-focused MCP server (`agent-utilities[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | You only run the **MCP server** (smallest install / image) |
+| `lgtm-mcp[agent]` | Agent runtime (`agent-utilities[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | You run the **integrated agent** |
 | `lgtm-mcp[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ```bash
-# MCP server only (recommended for tool hosting — slim deps)
+# Connector-focused MCP server (includes the shared graph engine)
 uv pip install "lgtm-mcp[mcp]"
 
-# Full agent runtime (Pydantic AI + epistemic-graph engine)
+# Agent runtime (adds model orchestration to the shared graph engine)
 uv pip install "lgtm-mcp[agent]"
 
 # Everything (development)
@@ -89,26 +89,27 @@ One multi-stage `docker/Dockerfile` builds two right-sized images, selected by `
 
 | Image tag | Build target | Contents | Entrypoint |
 |-----------|--------------|----------|------------|
-| `knucklessg1/lgtm-mcp:mcp` | `--target mcp` | `lgtm-mcp[mcp]` — **slim**, no engine/`pydantic-ai`/`dspy`/`llama-index`/`tree-sitter` | `lgtm-mcp` |
-| `knucklessg1/lgtm-mcp:latest` | `--target agent` (default) | `lgtm-mcp[agent]` — **full** agent runtime + epistemic-graph engine | `lgtm-agent` |
+| `example/lgtm-mcp:mcp` | `--target mcp` | `lgtm-mcp[mcp]` — **connector-focused**, includes `epistemic-graph[full]`; no model-orchestration stack | `lgtm-mcp` |
+| `example/lgtm-mcp@sha256:<digest>` | `--target agent` (default) | `lgtm-mcp[agent]` — **agent runtime**, model orchestration + `epistemic-graph[full]` | `lgtm-agent` |
 
 ```bash
-docker build --target mcp   -t knucklessg1/lgtm-mcp:mcp    docker/   # slim MCP server
-docker build --target agent -t knucklessg1/lgtm-mcp:latest docker/   # full agent
+docker build --target mcp   -t example/lgtm-mcp:mcp    docker/   # connector-focused MCP server
+docker build --target agent -t example/lgtm-mcp:agent-local docker/   # agent runtime
 ```
 
-`docker/mcp.compose.yml` runs the slim `:mcp` server; `docker/compose.yml` runs the
-agent (`:latest`) with a co-located `:mcp` sidecar.
+`docker/mcp.compose.yml` runs the connector-focused `:mcp` server; `docker/compose.yml` runs the
+agent (`immutable agent digest`) with a co-located `:mcp` sidecar.
 
 ### Knowledge-graph database (`epistemic-graph`)
 
-The **full agent** (`[agent]` / `:latest`) embeds the **epistemic-graph** engine (pulled in
-transitively via `agent-utilities[agent]`). For production — or to share one knowledge graph
-across multiple agents — run **epistemic-graph as its own database container** and point the
-agent at it instead of embedding it. Deployment recipes (single-node + Raft HA), connection
-config, and the full database architecture (with diagrams) are documented in the
+Both `[mcp]` and `[agent]` carry the **epistemic-graph** engine through the required
+Agent Utilities core dependency (`epistemic-graph[full]`). The `[mcp]` extra keeps
+the server connector-focused; `[agent]` additionally enables model orchestration. Local
+deployments can use the bundled engine. For production or shared state, run
+**epistemic-graph as a dedicated database service** and configure the runtime to use it.
+Deployment recipes (single-node + Raft HA), connection configuration, and architecture
+diagrams are documented in the
 [epistemic-graph deployment guide](https://knuckles-team.github.io/epistemic-graph/deployment/).
-The slim `[mcp]` server does **not** require the database.
 
 ---
 
@@ -147,34 +148,38 @@ python -m lgtm_mcp.mcp_server
 |----------|---------|-------------|
 | `ALERTMANAGER_URL` | `http://localhost:9093` | Prometheus Alertmanager server API URL |
 | `GRAFANA_URL` | `http://localhost:3000` | Grafana server API endpoint |
-| `LGTM_TOKEN` | `your_grafana_api_token` | Grafana admin API Key or Service Token |
+| `LGTM_TOKEN` | secret-injected | Grafana admin API Key or Service Token |
 | `LGTM_MCP_BASE_URL` | `http://localhost` | Fallback base URL used when ALERTMANAGER_URL / GRAFANA_URL are unset |
 | `LGTM_MCP_USERNAME` | — | Basic-auth username (alternative to LGTM_TOKEN) |
-| `LGTM_MCP_PASSWORD` | — | Basic-auth password (alternative to LGTM_TOKEN) |
-| `LGTM_MCP_SSL_VERIFY` | `True` | Verify TLS certificates on outbound API calls |
-| `ALERTMANAGERTOOL` | `True` | MCP tools table (condensed action-routed surface). |
+| `LGTM_MCP_PASSWORD` | secret-injected | Basic-auth password (alternative to LGTM_TOKEN) |
+| `TLS_PROFILE` | `private-ca` | AgentConfig named transport profile |
+| `TLS_PROFILE_REF` | `secret://transport/provider` | Direct runtime profile reference |
+| `TLS_PROFILES_REF` | `secret://transport/catalog` | Named runtime profile catalog |
+| `ALERTMANAGERTOOL` | `True` | These names match the authoritative "Toggle Env Var" column in the README MCP tools table (condensed action-routed surface). |
 | `GRAFANATOOL` | `True` |  |
 
 #### Inherited agent-utilities variables (apply to every connector)
 
 | Variable | Example | Description |
 |----------|---------|-------------|
-| `TRANSPORT` | `stdio` | MCP transport: `stdio` | `streamable-http` | `sse` |
-| `HOST` | `0.0.0.0` | Bind host (HTTP transports) |
+| `TRANSPORT` | `stdio` | MCP transport: `stdio` \| `streamable-http` \| `sse` |
+| `HOST` | `127.0.0.1` | Loopback bind host (set an authenticated ingress explicitly) |
 | `PORT` | `8000` | Bind port (HTTP transports) |
-| `MCP_TOOL_MODE` | `condensed` | Tool surface: `condensed` | `verbose` | `both` |
+| `MCP_TOOL_MODE` | `intent` | Tool surface: `intent` \| `condensed` \| `verbose` \| `both` |
 | `MCP_ENABLED_TOOLS` | — | Comma-separated tool allow-list |
 | `MCP_DISABLED_TOOLS` | — | Comma-separated tool deny-list |
 | `MCP_ENABLED_TAGS` | — | Comma-separated tag allow-list |
 | `MCP_DISABLED_TAGS` | — | Comma-separated tag deny-list |
-| `EUNOMIA_TYPE` | `none` | Authorization mode: `none` | `embedded` | `remote` |
+| `EUNOMIA_TYPE` | `none` | Authorization mode: `none` \| `embedded` \| `remote` |
 | `EUNOMIA_POLICY_FILE` | `mcp_policies.json` | Embedded Eunomia policy file |
 | `EUNOMIA_REMOTE_URL` | — | Remote Eunomia authorization server URL |
 | `ENABLE_OTEL` | `False` | Enable OpenTelemetry export |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | — | OTLP collector endpoint |
-| `MCP_CLIENT_AUTH` | — | Outbound MCP auth (`oidc-client-credentials` for fleet calls) |
+| `MCP_CLIENT_AUTH` | — | Outbound MCP child auth: `oidc-client-credentials` \| `basic` \| `none` |
 | `OIDC_CLIENT_ID` | — | OIDC client id (service-account auth) |
-| `OIDC_CLIENT_SECRET` | — | OIDC client secret (service-account auth) |
+| `OIDC_CLIENT_SECRET_REF` | `secret://identity/oidc-client-secret` | Runtime secret reference for the OIDC service account |
+| `MCP_BASIC_AUTH_USERNAME` | — | HTTP Basic username (`MCP_CLIENT_AUTH=basic`) |
+| `MCP_BASIC_AUTH_PASSWORD_REF` | `secret://identity/mcp-basic-password` | Runtime secret reference for HTTP Basic auth (`MCP_CLIENT_AUTH=basic`) |
 | `DEBUG` | `False` | Verbose logging |
 | `PYTHONUNBUFFERED` | `1` | Unbuffered stdout (recommended in containers) |
 | `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
@@ -182,7 +187,7 @@ python -m lgtm_mcp.mcp_server
 | `MODEL_ID` | `gpt-4o` | Model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_9 package + 22 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_11 package + 24 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 
@@ -306,16 +311,16 @@ docker compose -f docker/compose.yml up --build -d
 <!-- BEGIN GENERATED: additional-deployment-options -->
 ### Additional Deployment Options
 
-`lgtm-mcp` can also run as a **local container** (Docker / Podman / `uv`) or be
-consumed from a **remote deployment**. The
-[Deployment guide](https://knuckles-team.github.io/lgtm-mcp/deployment/) has full, copy-paste
-`mcp_config.json` for all four transports — **stdio**, **streamable-http**,
-**local container / uv**, and **remote URL**:
+`lgtm-mcp` can run as a local stdio process or container, or behind a remote
+network boundary. The
+[Deployment guide](https://knuckles-team.github.io/lgtm-mcp/deployment/) carries
+the detailed transport contract.
 
-- **Local container / uv** — launch the server from `mcp_config.json` via `uvx`,
-  `docker run`, or `podman run`, or point at a local streamable-http container by `url`.
-- **Remote URL** — connect to a server deployed behind Caddy at
-  `http://lgtm-mcp.arpa/mcp` using the `"url"` key.
+- **Local container** — launch a reviewed immutable image as a least-privilege
+  stdio child with no listener or published port.
+- **Remote URL** — connect through an operator-supplied authenticated HTTPS
+  ingress. Keep its URL, outbound identity references, trust profile, and exact
+  `MCP_ALLOWED_HOSTS` in `AgentConfig`.
 <!-- END GENERATED: additional-deployment-options -->
 
 ## Documentation
@@ -337,7 +342,7 @@ recommended reference for installation, deployment, and day-to-day operation.
 
 ## Contributing
 
-Please audit all code changes against ecosystem guidelines in [CONTRIBUTING.md](CONTRIBUTING.md) if available, and run:
+Please audit all code changes against the repository's contribution and review requirements, and run:
 
 ```bash
 pre-commit run --all-files
@@ -350,23 +355,40 @@ pre-commit run --all-files
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for complete details.
 
 
-<!-- BEGIN agent-os-genesis-deploy (generated; do not edit between markers) -->
+<!-- BEGIN agent-utilities-deployment (generated; do not edit between markers) -->
 
-## Deploy with `agent-os-genesis`
+## Deploy with `agent-utilities-deployment`
 
-This package can be provisioned for you — skill-guided — by the **`agent-os-genesis`**
-universal skill (its *single-package deploy mode*): it picks your install method, seeds
-secrets to OpenBao/Vault (or `.env`), trusts your enterprise CA, registers the MCP
-server, and verifies it — the same machinery that stands up the whole Agent OS, narrowed
-to just this package. Ask your agent to **"deploy `lgtm-mcp` with agent-os-genesis"**.
+Provision this package with the consolidated **`agent-utilities-deployment`**
+workflow. It selects an installed-package, editable-source, or immutable-container
+path; records only runtime secret and TLS-profile references in `AgentConfig`; and
+runs doctor, registration, policy, observability, and rollback gates. Ask your agent
+to **"deploy `lgtm-mcp` with agent-utilities-deployment"**.
 
 | Install mode | Command |
 |------|---------|
-| Bare-metal, prod (PyPI) | `uvx lgtm-mcp` · or `uv tool install lgtm-mcp` |
-| Bare-metal, dev (editable) | `uv pip install -e ".[all]"` · or `pip install -e ".[all]"` |
-| Container, prod | deploy `knucklessg1/lgtm-mcp:latest` via docker-compose / swarm / podman / podman-compose / kubernetes |
-| Container, dev (editable) | deploy `docker/compose.dev.yml` (source-mounted at `/src`; edits live on restart) |
+| Installed package | `uv tool install "lgtm-mcp[mcp]"`, then run `lgtm-mcp` |
+| Editable source | `uv pip install -e ".[agent]"`, then run `lgtm-mcp` |
+| Immutable container | deploy `registry.example.invalid/lgtm-mcp@sha256:<digest>` through the operator-selected orchestrator |
 
-Secrets are read-existing + seeded via `vault_sync` — you are only prompted for what's missing.
+The repository embeds no deployment profile, credential value, certificate path, or
+environment-specific endpoint. Supply those at runtime through `AgentConfig` and the
+configured secret provider.
 
-<!-- END agent-os-genesis-deploy -->
+<!-- END agent-utilities-deployment -->
+
+<!-- GOVERNED-CAPABILITY:START -->
+## Governed capability contract
+
+This package ships a compact canonical skill surface with specialist procedures
+kept as referenced workflows. The current MCP tools, skill metadata,
+`connector_manifest.yml`, ontology, mappings, shapes, fixtures, migrations,
+tool-schema fingerprints, and certification metadata form one versioned
+capability contract. Validate them together; do not rely on stale tool names or
+historical per-task skill wrappers.
+
+Runtime endpoints, credentials, certificate trust, tenant identity, retention,
+and observability policy are deployment inputs and are never packaged values.
+See [Configuration, trust, and privacy](docs/configuration.md) before enabling a
+network transport, connector ingestion, GraphOS delegation, or trace export.
+<!-- GOVERNED-CAPABILITY:END -->

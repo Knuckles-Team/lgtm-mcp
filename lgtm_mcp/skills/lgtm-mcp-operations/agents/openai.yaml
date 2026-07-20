@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lgtm MCP Operations"
+  short_description: "Help with Lgtm MCP Operations tasks"
+  default_prompt: "Use $lgtm-mcp-operations to complete a governed provider workflow."

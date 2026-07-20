@@ -1,0 +1,20 @@
+schema_version: '1'
+connector: lgtm-mcp
+ontology_source: grafana
+sync:
+- preset: lgtm-dashboards
+  server: lgtm-mcp
+  tool: lgtm_mcp_grafana
+  action: get_dashboards
+  records_path: ''
+  id_field: uid
+  title_field: title
+  text_field: title
+  updated_field: ''
+  doc_type: dashboard
+  tool_schema_sha256: b0d7d43b791e0fe8c4b482e07616d05e088f4ee00011077ae68ecfca622a6a83
+governance:
+  default_acl: quarantine
+  identity: opaque-reference
+  tenant: required-at-materialization
+  provenance: required-at-materialization

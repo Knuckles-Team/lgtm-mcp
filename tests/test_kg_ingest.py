@@ -8,12 +8,16 @@ mapping. CONCEPT:AU-KG.ingest.enterprise-source-extractor.
 
 from __future__ import annotations
 
+import pytest
+from agent_utilities.knowledge_graph.memory.native_ingest import NativeIngestError
+
 from lgtm_mcp.kg_ingest import ingest_alerts, ingest_dashboards, ingest_entities
 
 
 class _FakeTxn:
     def __init__(self):
         self.nodes = {}
+        self.edges = []
         self.committed = False
 
     def begin(self, graph=None):
@@ -23,33 +27,27 @@ class _FakeTxn:
     def add_node(self, txn, node_id, props):
         self.nodes[node_id] = props
 
+    def add_edge(self, txn, source, target, props):
+        self.edges.append((source, target, props))
+
     def commit(self, txn):
         self.committed = True
         return True
 
 
-class _FakeEdges:
-    def __init__(self):
-        self.edges = []
-
-    def add(self, src, dst, props):
-        self.edges.append((src, dst, props))
-
-
 class _FakeClient:
     def __init__(self):
         self.txn = _FakeTxn()
-        self.edges = _FakeEdges()
 
 
 def test_ingest_entities_writes_nodes_and_edges():
     c = _FakeClient()
     res = ingest_entities(
         [
-            {"id": "a", "type": "Alert", "name": "HighCPU"},
-            {"id": "b", "type": "Receiver", "name": "pagerduty"},
+            {"id": "a", "node_type": "Alert", "name": "HighCPU"},
+            {"id": "b", "node_type": "Receiver", "name": "pagerduty"},
         ],
-        [{"source": "a", "target": "b", "type": "routedTo"}],
+        [{"source": "a", "target": "b", "relationship": "routedTo"}],
         client=c,
         graph="__commons__",
     )
@@ -59,7 +57,7 @@ def test_ingest_entities_writes_nodes_and_edges():
     # provenance is stamped
     assert c.txn.nodes["a"]["source"] == "lgtm-mcp"
     assert c.txn.nodes["a"]["domain"] == "observability"
-    assert c.edges.edges == [("a", "b", {"type": "routedTo"})]
+    assert c.txn.edges == [("a", "b", {"relationship": "routedTo"})]
 
 
 def test_ingest_dashboards_maps_dashboard_nodes():
@@ -82,7 +80,7 @@ def test_ingest_dashboards_maps_dashboard_nodes():
     # folder is skipped -> only the dashboard node
     assert res == {"nodes": 1, "edges": 0}
     node = c.txn.nodes["observability:dashboard:abc123"]
-    assert node["type"] == "Dashboard"
+    assert node["node_type"] == "Dashboard"
     assert node["dashboardTitle"] == "Node Exporter"
     assert node["tags"] == "prod,linux"
     assert node["externalToolId"] == "abc123"
@@ -106,28 +104,25 @@ def test_ingest_alerts_maps_alert_and_receiver():
     )
     assert res == {"nodes": 2, "edges": 1}
     alert = c.txn.nodes["observability:alert:deadbeef"]
-    assert alert["type"] == "Alert"
+    assert alert["node_type"] == "Alert"
     assert alert["name"] == "HighCPU"
     assert alert["severity"] == "critical"
     assert alert["alertState"] == "active"
-    assert c.txn.nodes["observability:receiver:pagerduty"]["type"] == "Receiver"
-    assert c.edges.edges == [
+    assert c.txn.nodes["observability:receiver:pagerduty"]["node_type"] == "Receiver"
+    assert c.txn.edges == [
         (
             "observability:alert:deadbeef",
             "observability:receiver:pagerduty",
-            {"type": "routedTo"},
+            {"relationship": "routedTo"},
         )
     ]
 
 
-def test_ingest_noops_without_engine():
-    # No injected client + no reachable engine -> clean no-op.
-    assert (
-        ingest_entities([{"id": "a", "type": "Alert"}], client=None, graph=None) is None
-    )
+def test_retired_structural_alias_is_rejected():
+    with pytest.raises(NativeIngestError, match="canonical node_type"):
+        ingest_entities([{"id": "a", "type": "Alert"}], client=_FakeClient())
 
 
-def test_ingest_empty_is_noop():
-    assert ingest_entities([], client=_FakeClient()) is None
-    assert ingest_dashboards([], client=_FakeClient()) is None
-    assert ingest_alerts([], client=_FakeClient()) is None
+def test_empty_native_ingest_is_rejected():
+    with pytest.raises(NativeIngestError, match="at least one entity"):
+        ingest_entities([], client=_FakeClient())

@@ -22,7 +22,7 @@ Grafana provides dashboards on `:3000`.
 # docker/lgtm.compose.yml
 services:
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus@sha256:<digest>
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -33,7 +33,7 @@ services:
       - "9090:9090"
 
   alertmanager:
-    image: prom/alertmanager:latest
+    image: prom/alertmanager@sha256:<digest>
     command:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
       - '--storage.path=/alertmanager'
@@ -44,7 +44,7 @@ services:
       - "9093:9093"            # Alertmanager API → ALERTMANAGER_URL
 
   grafana:
-    image: grafana/grafana-oss:latest
+    image: grafana/grafana-oss@sha256:<digest>
     volumes:
       - grafana_data:/var/lib/grafana
     ports:
@@ -92,15 +92,15 @@ network, so the server reaches Grafana and Alertmanager by container name:
 # docker/stack.compose.yml
 services:
   alertmanager:
-    image: prom/alertmanager:latest
+    image: prom/alertmanager@sha256:<digest>
     ports: ["9093:9093"]
 
   grafana:
-    image: grafana/grafana-oss:latest
+    image: grafana/grafana-oss@sha256:<digest>
     ports: ["3000:3000"]
 
   lgtm-mcp:
-    image: knucklessg1/lgtm-mcp:latest
+    image: example/lgtm-mcp@sha256:<digest>
     depends_on: [grafana, alertmanager]
     environment:
       - GRAFANA_URL=http://grafana:3000

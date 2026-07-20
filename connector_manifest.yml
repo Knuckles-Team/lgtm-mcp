@@ -213,6 +213,7 @@ sync:
   updated_field: ''
   pagination: none
   doc_type: dashboard
+  tool_schema_sha256: b0d7d43b791e0fe8c4b482e07616d05e088f4ee00011077ae68ecfca622a6a83
   raw:
     server: lgtm-mcp
     tool: lgtm_mcp_grafana
@@ -226,9 +227,10 @@ sync:
     doc_type: dashboard
 provenance:
   generated_by: scripts/generate_connector_manifests.py
-  generated_at: '2026-07-09T00:00:00Z'
+  generated_at: '2026-07-18T00:00:00Z'
   source_artifacts:
   - lgtm_mcp/connectors/mcp_source_presets.json
+  - lgtm_mcp/connectors/tool_schema_fingerprints.json
   - lgtm_mcp/ontology/grafana.ttl
   - lgtm_mcp/ontology/observability.ttl
   integrity:
@@ -236,7 +238,9 @@ provenance:
     hash: 665de7f07f2c74ef87ac27e3d6f6bc285b3f82e1c50bfd2eb0fe0bee4b407787
     triple_count: 86
   signer: ontology-manifest-generator
-  signature: 3e3d07373f8b5c8042808397861ffa18b8eed7bed489b11c74e8132610bb4eab
+  signature_algorithm: ed25519
+  signing_public_key: q0Cp7bmQMqJhbofGKKw8xXC6KbFzukBDDke0UYVi8y4
+  signature: yd-8WJjrHWuOxmRhhRhYjCa0WrVDecjWHB2QCem1oRo6p1KaBkAL2t-1_PgT8TLmczpVo1paTk6RZJb2qm_QDQ
 policy:
   pii_fields: {}
   tenant_boundary: null

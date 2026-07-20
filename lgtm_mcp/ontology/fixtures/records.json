@@ -1,0 +1,19 @@
+{
+  "connector": "lgtm-mcp",
+  "fixtures": [
+    {
+      "expected": {
+        "acl_state": "quarantine",
+        "id": "fixture-record",
+        "title": "Synthetic certification record"
+      },
+      "preset": "lgtm-dashboards",
+      "record": {
+        "acl_public": false,
+        "title": "Synthetic content used only for contract validation.",
+        "uid": "fixture-record"
+      }
+    }
+  ],
+  "schema_version": "1"
+}

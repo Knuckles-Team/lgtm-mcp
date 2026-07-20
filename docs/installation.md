@@ -22,7 +22,7 @@ The base install is intentionally minimal. Install the extra for what you need:
 | Extra | Install | Pulls in |
 |---|---|---|
 | `mcp` | `pip install "lgtm-mcp[mcp]"` | FastMCP MCP-server runtime (`agent-utilities[mcp]`) |
-| `agent` | `pip install "lgtm-mcp[agent]"` | Pydantic-AI agent + Logfire tracing (`agent-utilities[agent,logfire]`) |
+| `agent` | `pip install "lgtm-mcp[agent]"` | Pydantic-AI agent + Logfire tracing (`agent-utilities[agent-runtime,logfire]`) |
 | `all` | `pip install "lgtm-mcp[all]"` | Everything above |
 | `test` | `pip install "lgtm-mcp[test]"` | `pytest`, `pytest-asyncio`, `pytest-cov`, `pytest-xdist` |
 
@@ -48,16 +48,16 @@ uv run lgtm-mcp
 
 ## Prebuilt Docker image
 
-A multi-stage, slim image is published on every release (entrypoint `lgtm-mcp`):
+A multi-stage runtime image is published on every release (entrypoint `lgtm-mcp`):
 
 ```bash
-docker pull knucklessg1/lgtm-mcp:latest
+docker pull example/lgtm-mcp@sha256:<digest>
 
 docker run --rm -i \
   -e GRAFANA_URL=http://your-grafana:3000 \
   -e ALERTMANAGER_URL=http://your-alertmanager:9093 \
   -e LGTM_TOKEN=your_grafana_api_token \
-  knucklessg1/lgtm-mcp:latest        # stdio transport (default)
+  example/lgtm-mcp@sha256:<digest>        # stdio transport (default)
 ```
 
 For an HTTP server with a published port, see [Deployment](deployment.md).

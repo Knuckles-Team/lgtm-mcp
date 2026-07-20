@@ -15,8 +15,6 @@ def get_client() -> Api:
     token = setting("LGTM_TOKEN", "")
     username = setting("LGTM_MCP_USERNAME", "")
     password = setting("LGTM_MCP_PASSWORD", "")
-    verify = setting("LGTM_MCP_SSL_VERIFY", True)
-
     if not base_url:
         # Default fallback for testing
         base_url = "http://localhost"
@@ -28,6 +26,5 @@ def get_client() -> Api:
         token=token,
         username=username,
         password=password,
-        verify=verify,
         grafana_url=grafana_url,
     )
