@@ -1,5 +1,6 @@
 ---
 name: lgtm-mcp-operations
+skill_type: skill
 description: >-
   Operate lgtm-mcp through its governed MCP and GraphOS capabilities, including lgtm alertmanager alerts, lgtm grafana dashboards. Use when a request requires this provider's read, change, automation, ingestion, troubleshooting, or evidence workflows.
 ---
