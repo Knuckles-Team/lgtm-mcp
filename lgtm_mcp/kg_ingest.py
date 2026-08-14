@@ -35,7 +35,12 @@ def ingest_entities(
 ) -> dict[str, int]:
     """Write canonical typed nodes and relationships in one native transaction."""
     return _native_ingest_entities(
-        entities, relationships, source=source, domain=domain, client=client, graph=graph
+        entities,
+        relationships,
+        source=source,
+        domain=domain,
+        client=client,
+        graph=graph,
     )
 
 
@@ -128,5 +133,7 @@ def ingest_alerts(
             if name not in seen_receivers:
                 seen_receivers.add(name)
                 entities.append({"id": rid, "node_type": "Receiver", "name": name})
-            relationships.append({"source": aid, "target": rid, "relationship": "routedTo"})
+            relationships.append(
+                {"source": aid, "target": rid, "relationship": "routedTo"}
+            )
     return ingest_entities(entities, relationships, client=client, graph=graph)
