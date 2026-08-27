@@ -1,7 +1,7 @@
 {
   "api_version": "graphos.io/v1",
   "artifacts": {
-    "connector_manifest.yml": "9027a75e622efd2b97b3f1c85f1aca47eb2b78f1baf3c25534abbe33b3f6e395",
+    "connector_manifest.yml": "f6c3b2bb45f51889a6ba553e0d8a4ad35bf5aed124e38c1d1c7f662553b26026",
     "lgtm_mcp/connectors/mcp_source_presets.json": "5f492f9be6580435ee4da6b5daad6b2bd2e1f3710119d1c60df0d99ac18af96c",
     "lgtm_mcp/connectors/tool_schema_fingerprints.json": "95ce6c521d779d1443fd7304ce50ea3b8dd1fdde0c4be560714fff7204a92b73",
     "lgtm_mcp/ontology/fixtures/records.json": "9a576558e13459b5851511aef431bfdd492e324cf210bbbc471333921f9131c8",
@@ -19,9 +19,9 @@
     "synthetic_fixture_contract": "passed"
   },
   "compatibility": {
-    "agent_utilities": ">=2.4.0,<3",
+    "agent_utilities": ">=2.5.0,<3",
     "bundle_schema": "2",
-    "epistemic_graph": ">=2.26.0,<3"
+    "epistemic_graph": ">=2.27.0,<3"
   },
   "connector": "lgtm-mcp",
   "kind": "ConnectorSourceAttestation",
@@ -33,5 +33,5 @@
   "signer": "UNSIGNED-PREVIEW",
   "signing_public_key": "",
   "status": "source-validated",
-  "validated_at": "2026-08-21T04:30:39Z"
+  "validated_at": "2026-08-26T13:42:55Z"
 }
