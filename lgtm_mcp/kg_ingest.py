@@ -90,6 +90,49 @@ def ingest_dashboards(
     return ingest_entities(entities, None, client=client, graph=graph)
 
 
+def _map_alert(alert: dict[str, Any]) -> tuple[str, dict[str, Any]] | None:
+    """Map one Alertmanager alert to its ``:Alert`` node; None if it has no fingerprint id."""
+    fp = alert.get("fingerprint")
+    if not fp:
+        return None
+    labels = alert.get("labels") or {}
+    status = alert.get("status") or {}
+    aid = f"observability:alert:{fp}"
+    entity = {
+        "id": aid,
+        "node_type": "Alert",
+        "name": labels.get("alertname"),
+        "severity": labels.get("severity"),
+        "alertState": status.get("state"),
+        "startsAt": alert.get("startsAt"),
+        "endsAt": alert.get("endsAt"),
+        "url": alert.get("generatorURL"),
+        "externalToolId": str(fp),
+    }
+    return aid, entity
+
+
+def _map_alert_receivers(
+    aid: str, alert: dict[str, Any], seen_receivers: set[str]
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Map one alert's receivers to ``:Receiver`` nodes (deduped via seen_receivers,
+    mutated in place) + ``routedTo`` edges from the alert."""
+    entities: list[dict[str, Any]] = []
+    relationships: list[dict[str, Any]] = []
+    for rcv in alert.get("receivers") or []:
+        name = rcv.get("name") if isinstance(rcv, dict) else rcv
+        if not name:
+            continue
+        rid = f"observability:receiver:{name}"
+        if name not in seen_receivers:
+            seen_receivers.add(name)
+            entities.append({"id": rid, "node_type": "Receiver", "name": name})
+        relationships.append(
+            {"source": aid, "target": rid, "relationship": "routedTo"}
+        )
+    return entities, relationships
+
+
 def ingest_alerts(
     alerts: list[dict[str, Any]],
     *,
@@ -106,34 +149,16 @@ def ingest_alerts(
     relationships: list[dict[str, Any]] = []
     seen_receivers: set[str] = set()
     for alert in alerts or []:
-        fp = alert.get("fingerprint")
-        if not fp:
+        mapped = _map_alert(alert)
+        if mapped is None:
             continue
-        labels = alert.get("labels") or {}
-        status = alert.get("status") or {}
-        aid = f"observability:alert:{fp}"
-        entities.append(
-            {
-                "id": aid,
-                "node_type": "Alert",
-                "name": labels.get("alertname"),
-                "severity": labels.get("severity"),
-                "alertState": status.get("state"),
-                "startsAt": alert.get("startsAt"),
-                "endsAt": alert.get("endsAt"),
-                "url": alert.get("generatorURL"),
-                "externalToolId": str(fp),
-            }
+        aid, entity = mapped
+        entities.append(entity)
+
+        rcv_entities, rcv_relationships = _map_alert_receivers(
+            aid, alert, seen_receivers
         )
-        for rcv in alert.get("receivers") or []:
-            name = rcv.get("name") if isinstance(rcv, dict) else rcv
-            if not name:
-                continue
-            rid = f"observability:receiver:{name}"
-            if name not in seen_receivers:
-                seen_receivers.add(name)
-                entities.append({"id": rid, "node_type": "Receiver", "name": name})
-            relationships.append(
-                {"source": aid, "target": rid, "relationship": "routedTo"}
-            )
+        entities.extend(rcv_entities)
+        relationships.extend(rcv_relationships)
+
     return ingest_entities(entities, relationships, client=client, graph=graph)
