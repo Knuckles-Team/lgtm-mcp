@@ -59,6 +59,29 @@ ALERTMANAGER_ACTIONS = (
 )
 
 
+async def _handle_get_alerts_action(client: Any, kwargs: dict[str, Any]) -> Any:
+    result = await run_blocking(client.get_alerts, **kwargs)
+    _auto_ingest_alerts(result)
+    return result
+
+
+# Every Alertmanager action name matches its Api client method name 1:1,
+# except get_alerts, which also triggers a best-effort KG auto-ingest.
+_ALERTMANAGER_DIRECT_ACTIONS = tuple(
+    action for action in ALERTMANAGER_ACTIONS if action != "get_alerts"
+)
+
+
+async def _dispatch_alertmanager_action(
+    action: str, client: Any, kwargs: dict[str, Any]
+) -> Any:
+    if action == "get_alerts":
+        return await _handle_get_alerts_action(client, kwargs)
+    if action in _ALERTMANAGER_DIRECT_ACTIONS:
+        return await run_blocking(getattr(client, action), **kwargs)
+    raise ValueError(f"Unknown Alertmanager action: {action}")
+
+
 def register_alertmanager_tools(mcp: FastMCP):
     """Register LGTM MCP Alertmanager tools.
     CONCEPT:LG-OS.governance.lgtm-2
@@ -98,32 +121,7 @@ def register_alertmanager_tools(mcp: FastMCP):
             return resolved
         action = resolved
 
-        if action == "get_status":
-            return await run_blocking(client.get_status, **kwargs)
-        if action == "get_receivers":
-            return await run_blocking(client.get_receivers, **kwargs)
-        if action == "get_silences":
-            return await run_blocking(client.get_silences, **kwargs)
-        if action == "post_silences":
-            return await run_blocking(client.post_silences, **kwargs)
-        if action == "create_silence":
-            return await run_blocking(client.create_silence, **kwargs)
-        if action == "get_silence":
-            return await run_blocking(client.get_silence, **kwargs)
-        if action == "delete_silence":
-            return await run_blocking(client.delete_silence, **kwargs)
-        if action == "get_alerts":
-            result = await run_blocking(client.get_alerts, **kwargs)
-            _auto_ingest_alerts(result)
-            return result
-        if action == "post_alerts":
-            return await run_blocking(client.post_alerts, **kwargs)
-        if action == "create_alerts":
-            return await run_blocking(client.create_alerts, **kwargs)
-        if action == "get_alert_groups":
-            return await run_blocking(client.get_alert_groups, **kwargs)
-
-        raise ValueError(f"Unknown Alertmanager action: {action}")
+        return await _dispatch_alertmanager_action(action, client, kwargs)
 
     @mcp.tool(tags={"alertmanager", "kg"})
     async def lgtm_ingest_alerts(
