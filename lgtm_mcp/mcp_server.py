@@ -1,7 +1,7 @@
 """Main FastMCP server and tool registration."""
 
 import sys
-from typing import Any
+from typing import Any, Literal
 
 from agent_utilities.core.config import load_config
 from agent_utilities.mcp.action_dispatch import resolve_action
@@ -166,7 +166,9 @@ def register_grafana_tools(mcp: FastMCP):
 
     @mcp.tool(tags={"grafana"})
     async def lgtm_mcp_grafana(
-        action: str = Field(
+        action: Literal[
+            "create_dashboard", "get_dashboards", "query_datasource"
+        ] = Field(
             description=(
                 "Action to perform. Must be one of: "
                 "'get_dashboards', 'create_dashboard', 'query_datasource'"

@@ -1,8 +1,8 @@
 {
-  "algorithm": "agent-utilities:mcp-tool-schema-compat:v1",
+  "algorithm": "agent-connector-sdk:mcp-tool-contract-compat:v2",
   "connector": "lgtm-mcp",
   "schema_version": "1",
   "tools": {
-    "lgtm_mcp_grafana": "b0d7d43b791e0fe8c4b482e07616d05e088f4ee00011077ae68ecfca622a6a83"
+    "lgtm_mcp_grafana": "6cef294ed293e7301448bf27def7a4aba563f68047c6a2271db6e94501b0f74d"
   }
 }

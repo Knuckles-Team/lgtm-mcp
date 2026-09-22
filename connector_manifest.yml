@@ -221,7 +221,7 @@ sync:
   updated_field: ''
   pagination: none
   doc_type: dashboard
-  tool_schema_sha256: b0d7d43b791e0fe8c4b482e07616d05e088f4ee00011077ae68ecfca622a6a83
+  tool_schema_sha256: 6cef294ed293e7301448bf27def7a4aba563f68047c6a2271db6e94501b0f74d
   raw:
     server: lgtm-mcp
     tool: lgtm_mcp_grafana
