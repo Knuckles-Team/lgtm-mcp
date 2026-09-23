@@ -164,7 +164,18 @@ def register_grafana_tools(mcp: FastMCP):
     CONCEPT:LG-OS.governance.lgtm-2
     """
 
-    @mcp.tool(tags={"grafana"})
+    @mcp.tool(
+        tags={"grafana"},
+        annotations={
+            "readOnlyHint": False,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": True,
+        },
+        meta={
+            "eg.annotations": {"modalities_in": ["text"], "modalities_out": ["text"]}
+        },
+    )
     async def lgtm_mcp_grafana(
         action: Literal[
             "create_dashboard", "get_dashboards", "query_datasource"
