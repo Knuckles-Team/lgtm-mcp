@@ -1,7 +1,7 @@
 """CONCEPT:LG-OS.identity.lgtm Identity credentials loader and session manager."""
 
-from agent_utilities.base_utilities import get_logger
-from agent_utilities.core.config import setting
+from agent_connector_sdk.utilities import get_logger
+from agent_connector_sdk.config import setting
 
 from lgtm_mcp.api_client import Api
 
