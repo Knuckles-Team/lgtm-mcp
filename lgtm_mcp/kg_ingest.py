@@ -11,6 +11,12 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from agent_utilities.knowledge_graph.memory.native_ingest import (
+    ingest_documents as _native_ingest_documents,
+)
+from agent_utilities.knowledge_graph.memory.native_ingest import (
+    ingest_entities as _native_ingest_entities,
+)
 
 logger = logging.getLogger("lgtm_mcp.kg")
 
@@ -18,20 +24,38 @@ _SOURCE = "lgtm-mcp"
 _DOMAIN = "observability"
 
 
-def ingest_entities(*args: object, **kwargs: object) -> object:
-    """Write canonical typed nodes and relationships in one native transaction.
+def ingest_entities(
+    entities: list[dict[str, Any]],
+    relationships: list[dict[str, Any]] | None = None,
+    *,
+    source: str = _SOURCE,
+    domain: str = _DOMAIN,
+    client: Any | None = None,
+    graph: str | None = None,
+) -> dict[str, int]:
+    """Write canonical typed nodes and relationships in one native transaction."""
+    return _native_ingest_entities(
+        entities,
+        relationships,
+        source=source,
+        domain=domain,
+        client=client,
+        graph=graph,
+    )
 
-    SDK-GAP: Always raises now; see KnowledgeGraphIngestUnavailable.
-    """
-    _kg_unavailable("ingest_entities")
 
-
-def ingest_documents(*args: object, **kwargs: object) -> object:
-    """Write text records as canonical Document nodes.
-
-    SDK-GAP: Always raises now; see KnowledgeGraphIngestUnavailable.
-    """
-    _kg_unavailable("ingest_documents")
+def ingest_documents(
+    docs: list[dict[str, Any]],
+    *,
+    source: str = _SOURCE,
+    domain: str = _DOMAIN,
+    client: Any | None = None,
+    graph: str | None = None,
+) -> dict[str, int]:
+    """Write text records as canonical Document nodes."""
+    return _native_ingest_documents(
+        docs, source=source, domain=domain, client=client, graph=graph
+    )
 
 
 def _dashboard_id(record: dict[str, Any]) -> str | None:
@@ -103,7 +127,9 @@ def _map_alert_receivers(
         if name not in seen_receivers:
             seen_receivers.add(name)
             entities.append({"id": rid, "node_type": "Receiver", "name": name})
-        relationships.append({"source": aid, "target": rid, "relationship": "routedTo"})
+        relationships.append(
+            {"source": aid, "target": rid, "relationship": "routedTo"}
+        )
     return entities, relationships
 
 
@@ -136,23 +162,3 @@ def ingest_alerts(
         relationships.extend(rcv_relationships)
 
     return ingest_entities(entities, relationships, client=client, graph=graph)
-
-
-class KnowledgeGraphIngestUnavailable(RuntimeError):
-    """Direct-to-graph ingestion is unavailable from this connector.
-
-    SDK-GAP (EH-48x, /var/tmp/l9/finish/au-decon-G4c/SDK-GAPS.md): raised in
-    place of the old ``agent_utilities.knowledge_graph`` native-ingest call --
-    agent-connector-sdk has no facade over EG's typed ingestion protocol yet,
-    and the fleet precedent (agents/world-reference-mcp) moves direct-to-graph
-    delivery to agent_connector_sdk.runner/sinks at the deployment layer, out
-    of connector scope.
-    """
-
-
-def _kg_unavailable(name: str) -> None:
-    raise KnowledgeGraphIngestUnavailable(
-        f"{name}: direct-to-graph ingestion moved out of connector code "
-        "(agent-utilities removed); no agent-connector-sdk facade exists yet "
-        "-- see SDK-GAPS.md"
-    )
