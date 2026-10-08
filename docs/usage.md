@@ -1,7 +1,7 @@
 # Usage — API / MCP
 
 `lgtm-mcp` exposes the same capability two ways: as **MCP tools** an agent calls, and
-as a **Python API** (`Api`) you import. A deeper architectural description is in
+as a **Python API** (`Api`) the operator import. A deeper architectural description is in
 [Overview](overview.md).
 
 ## As an MCP server
