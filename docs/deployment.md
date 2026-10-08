@@ -82,7 +82,7 @@ The transport is selected with `--transport` (or the `TRANSPORT` env var):
     ```bash
     lgtm-mcp
     ```
-    For IDE / desktop MCP clients that launch the server as a subprocess.
+    For IDE / desktop MCP clients that start the server as a subprocess.
 
 === "streamable-http"
 
@@ -115,7 +115,7 @@ curl -s http://localhost:8000/health        # {"status":"OK"}
 
 Plus `HOST` / `PORT` / `TRANSPORT` for HTTP transports. The full set is documented in
 [`.env.example`](https://github.com/Knuckles-Team/lgtm-mcp/blob/main/.env.example).
-Copy it to `.env` and fill in your service endpoints before starting the server.
+Copy it to `.env` and fill in the operator's service endpoints before starting the server.
 
 ## Docker Compose
 
@@ -153,7 +153,7 @@ docker compose -f docker/mcp.compose.yml logs -f
 
 ## Behind a Caddy reverse proxy
 
-Expose the HTTP server on a hostname with automatic TLS. Add to your `Caddyfile`:
+Expose the HTTP server on a hostname with automatic TLS. Add to the operator's `Caddyfile`:
 
 ```caddy
 # Internal (self-signed) — homelab .example.invalid zone
@@ -197,7 +197,7 @@ this as a tool.
 
 ## Register with an MCP client
 
-Add to your client's `mcp_config.json` (multiplexer nickname `lgtm`):
+Add to the operator's client's `mcp_config.json` (multiplexer nickname `lgtm`):
 
 ```json
 {

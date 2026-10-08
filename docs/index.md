@@ -33,7 +33,7 @@ raising on an unreachable backend.
 
 <div class="grid cards" markdown>
 
-- :material-rocket-launch: **[Installation](installation.md)** — pip, source, extras, and the prebuilt Docker image.
+- :material-rocket-start: **[Installation](installation.md)** — pip, source, extras, and the prebuilt Docker image.
 - :material-server-network: **[Deployment](deployment.md)** — run the MCP server, the agent server, Docker Compose, Caddy + Technitium.
 - :material-console: **[Usage](usage.md)** — the MCP tools and the `Api` Python client.
 - :material-database-cog: **[Backing Platform](platform.md)** — deploy the LGTM observability stack with Docker.

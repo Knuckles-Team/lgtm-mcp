@@ -70,7 +70,7 @@ cAdvisor on a Swarm overlay network — is maintained in the ecosystem
 
 ## Connect lgtm-mcp
 
-Point the connector at the deployed endpoints and supply a Grafana service token:
+Point the connector at the deployed endpoints and provide a Grafana service token:
 
 ```bash
 export GRAFANA_URL=http://localhost:3000
