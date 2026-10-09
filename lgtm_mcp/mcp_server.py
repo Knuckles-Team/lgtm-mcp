@@ -3,11 +3,11 @@
 import sys
 from typing import Any
 
-from agent_utilities.core.config import load_config
-from agent_utilities.mcp.action_dispatch import resolve_action
-from agent_utilities.mcp.concurrency import run_blocking
-from agent_utilities.mcp.server_factory import create_mcp_server
-from agent_utilities.mcp.verbose_tools import register_tool_surface
+from agent_connector_sdk.config import load_config
+from agent_connector_sdk.mcp.action_dispatch import resolve_action
+from agent_connector_sdk.mcp.concurrency import run_blocking
+from agent_connector_sdk.mcp.server import create_mcp_server
+from agent_connector_sdk.mcp.tool_surface import register_tool_surface
 from fastmcp import Context, FastMCP
 from fastmcp.dependencies import Depends
 from fastmcp.utilities.logging import get_logger
@@ -22,24 +22,24 @@ __version__ = "0.15.0"
 logger = get_logger(name="lgtm_mcp")
 
 
-def _auto_ingest_dashboards(result: Any) -> None:
+async def _auto_ingest_dashboards(result: Any) -> None:
     """Best-effort native KG ingest of a get_dashboards result (no-op without engine)."""
     try:
         from lgtm_mcp.kg_ingest import ingest_dashboards
 
         records = result if isinstance(result, list) else []
-        ingest_dashboards([r for r in records if isinstance(r, dict)])
+        await ingest_dashboards([r for r in records if isinstance(r, dict)])
     except Exception as e:  # noqa: BLE001 — ingestion is best-effort
         logger.debug("Operation failed: error_type=%s", type(e).__name__)
 
 
-def _auto_ingest_alerts(result: Any) -> None:
+async def _auto_ingest_alerts(result: Any) -> None:
     """Best-effort native KG ingest of a get_alerts result (no-op without engine)."""
     try:
         from lgtm_mcp.kg_ingest import ingest_alerts
 
         records = result if isinstance(result, list) else []
-        ingest_alerts([r for r in records if isinstance(r, dict)])
+        await ingest_alerts([r for r in records if isinstance(r, dict)])
     except Exception as e:  # noqa: BLE001 — ingestion is best-effort
         logger.debug("Operation failed: error_type=%s", type(e).__name__)
 
@@ -61,7 +61,7 @@ ALERTMANAGER_ACTIONS = (
 
 async def _handle_get_alerts_action(client: Any, kwargs: dict[str, Any]) -> Any:
     result = await run_blocking(client.get_alerts, **kwargs)
-    _auto_ingest_alerts(result)
+    await _auto_ingest_alerts(result)
     return result
 
 
@@ -148,7 +148,7 @@ def register_alertmanager_tools(mcp: FastMCP):
         result = await run_blocking(client.get_alerts, **kwargs)
         records = result if isinstance(result, list) else []
         alerts = [r for r in records if isinstance(r, dict)]
-        ingested = ingest_alerts(alerts)
+        ingested = await ingest_alerts(alerts)
         return {"listed": len(alerts), "ingested": ingested}
 
 
@@ -198,7 +198,7 @@ def register_grafana_tools(mcp: FastMCP):
 
         if action == "get_dashboards":
             result = await run_blocking(client.get_dashboards, **kwargs)
-            _auto_ingest_dashboards(result)
+            await _auto_ingest_dashboards(result)
             return result
         if action == "create_dashboard":
             return await run_blocking(client.create_dashboard, **kwargs)
@@ -227,7 +227,7 @@ def register_grafana_tools(mcp: FastMCP):
         result = await run_blocking(client.get_dashboards)
         records = result if isinstance(result, list) else []
         dashboards = [r for r in records if isinstance(r, dict)]
-        ingested = ingest_dashboards(dashboards)
+        ingested = await ingest_dashboards(dashboards)
         return {"listed": len(dashboards), "ingested": ingested}
 
 
