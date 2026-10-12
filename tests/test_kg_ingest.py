@@ -53,7 +53,9 @@ def _mapping_reference(node_type: str) -> str:
 
 
 def _relation_reference(source_node_type: str, relationship: str) -> str:
-    return f"manifest:{_CONNECTOR}#resources/{source_node_type}/relations/{relationship}"
+    return (
+        f"manifest:{_CONNECTOR}#resources/{source_node_type}/relations/{relationship}"
+    )
 
 
 @pytest.mark.asyncio
@@ -131,10 +133,9 @@ async def test_ingest_alerts_maps_alert_and_receiver(ingest):
     assert alert.payload["name"] == "HighCPU"
     assert alert.payload["severity"] == "critical"
     assert alert.payload["alertState"] == "active"
-    assert (
-        records["observability:receiver:pagerduty"].mapping_reference
-        == _mapping_reference("Receiver")
-    )
+    assert records[
+        "observability:receiver:pagerduty"
+    ].mapping_reference == _mapping_reference("Receiver")
     rel = request.relationships[0]
     assert rel.source.record_id == "observability:alert:deadbeef"
     assert rel.target.record_id == "observability:receiver:pagerduty"

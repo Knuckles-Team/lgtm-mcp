@@ -172,9 +172,7 @@ def _map_alert_receivers(
         if name not in seen_receivers:
             seen_receivers.add(name)
             entities.append({"id": rid, "node_type": "Receiver", "name": name})
-        relationships.append(
-            {"source": aid, "target": rid, "relationship": "routedTo"}
-        )
+        relationships.append({"source": aid, "target": rid, "relationship": "routedTo"})
     return entities, relationships
 
 

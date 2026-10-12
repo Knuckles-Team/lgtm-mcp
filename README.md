@@ -157,6 +157,9 @@ python -m lgtm_mcp.mcp_server
 | `TLS_PROFILES_REF` | `secret://transport/catalog` | Named runtime profile catalog |
 | `ALERTMANAGERTOOL` | `True` | These names match the authoritative "Toggle Env Var" column in the README MCP tools table (condensed action-routed surface). |
 | `GRAFANATOOL` | `True` |  |
+| `LGTM_MCP_MCP_IMAGE` | — | Operator-approved immutable image@sha256 reference for the MCP Compose service |
+| `LGTM_TLS_PROFILE` | — | Optional LGTM-specific AgentConfig TLS selectors; verification stays mandatory |
+| `LGTM_TLS_PROFILE_REF` | — |  |
 
 #### Inherited agent-utilities variables (apply to every connector)
 
@@ -165,7 +168,6 @@ python -m lgtm_mcp.mcp_server
 | `TRANSPORT` | `stdio` | MCP transport: `stdio` \| `streamable-http` \| `sse` |
 | `HOST` | `127.0.0.1` | Loopback bind host (set an authenticated ingress explicitly) |
 | `PORT` | `8000` | Bind port (HTTP transports) |
-| `MCP_TOOL_MODE` | `intent` | Tool surface: `intent` \| `condensed` \| `verbose` \| `both` |
 | `MCP_ENABLED_TOOLS` | — | Comma-separated tool allow-list |
 | `MCP_DISABLED_TOOLS` | — | Comma-separated tool deny-list |
 | `MCP_ENABLED_TAGS` | — | Comma-separated tag allow-list |
@@ -183,11 +185,11 @@ python -m lgtm_mcp.mcp_server
 | `DEBUG` | `False` | Verbose logging |
 | `PYTHONUNBUFFERED` | `1` | Unbuffered stdout (recommended in containers) |
 | `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
-| `PROVIDER` | `openai` | LLM provider for the agent |
-| `MODEL_ID` | `gpt-4o` | Model id for the agent |
+| `PROVIDER` | — | Operator-configured LLM provider for the agent |
+| `MODEL_ID` | — | Operator-configured model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_11 package + 24 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_14 package + 23 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 
@@ -235,43 +237,131 @@ Auto-generated — do not edit between the markers below.
 
 <!-- MCP-TOOLS-TABLE:START -->
 
-#### Condensed action-routed tools (default — `MCP_TOOL_MODE=condensed`)
+#### Intent tools
 
-| MCP Tool | Toggle Env Var | Description |
-|----------|----------------|-------------|
-| `lgtm_mcp_alertmanager` | `ALERTMANAGERTOOL` | Manage LGTM MCP Alertmanager operations. |
-| `lgtm_mcp_grafana` | `GRAFANATOOL` | Manage LGTM MCP Grafana operations. |
+| MCP Tool | Kind | Description |
+|----------|------|-------------|
+| `lgtm_ingest_alerts` | intent | Natively ingest Alertmanager alerts into epistemic-graph as typed :Alert nodes. |
+| `lgtm_ingest_dashboards` | intent | Natively ingest Grafana dashboards into epistemic-graph as typed :Dashboard nodes. |
+| `lgtm_mcp_alertmanager` | intent | Manage LGTM MCP Alertmanager operations. |
+| `lgtm_mcp_grafana` | intent | Manage LGTM MCP Grafana operations. |
 
-#### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)
-
-<details>
-<summary>14 per-operation tools — one per public API method (click to expand)</summary>
-
-| MCP Tool | Toggle Env Var | Description |
-|----------|----------------|-------------|
-| `lgtm_create_alerts` | `APITOOL` | Create new Alerts (Helper method matching post_alerts). |
-| `lgtm_create_dashboard` | `APITOOL` | Create dashboard. |
-| `lgtm_create_silence` | `APITOOL` | Silence active alerts (Helper method for backward compatibility). |
-| `lgtm_delete_silence` | `APITOOL` | Delete silence rule. |
-| `lgtm_get_alert_groups` | `APITOOL` | Get a list of alert groups. |
-| `lgtm_get_alerts` | `APITOOL` | Get a list of alerts. |
-| `lgtm_get_dashboards` | `APITOOL` | Get Grafana dashboards. |
-| `lgtm_get_receivers` | `APITOOL` | Get list of all receivers (notification integrations). |
-| `lgtm_get_silence` | `APITOOL` | Get a silence by its ID. |
-| `lgtm_get_silences` | `APITOOL` | Get a list of silences. |
-| `lgtm_get_status` | `APITOOL` | Get current status of an Alertmanager instance and its cluster. |
-| `lgtm_post_alerts` | `APITOOL` | Create new Alerts. |
-| `lgtm_post_silences` | `APITOOL` | Post a new silence or update an existing one. |
-| `lgtm_query_datasource` | `APITOOL` | Query a datasource. |
-
-</details>
-
-_2 action-routed tool(s) (default) · 14 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (`condensed` default · `verbose` 1:1 · `both`). Auto-generated — do not edit._
+_4 intent tool(s) · 0 operation(s). Call an operation as `act(action='<operation>', params={...})` (`ask` for reads); `find(action='describe', params={'action': '<operation>'})` returns its arguments. An operation is enabled unless its `<DOMAIN>TOOL` toggle is set false. Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
 
 See [docs/overview.md](docs/overview.md) or [docs/concepts.md](docs/concepts.md) for deeper operational examples.
 
 ---
+
+## MCP Configuration Examples
+
+<!-- MCP-CONFIG-EXAMPLES:START -->
+
+> **Install the connector-focused `[mcp]` extra.** Examples use `lgtm-mcp[mcp]` to add
+> FastMCP / FastAPI through `agent-utilities[mcp]`; the required Agent Utilities core
+> still carries `epistemic-graph[full]`. The `[agent-runtime]` extra additionally
+> enables model orchestration.
+
+#### stdio Transport (local IDEs — Cursor, Claude Desktop, VS Code)
+
+```json
+{
+  "mcpServers": {
+    "lgtm-mcp": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "lgtm-mcp[mcp]",
+        "lgtm-mcp"
+      ],
+      "env": {
+        "ALERTMANAGERTOOL": "True",
+        "ALERTMANAGER_URL": "http://localhost:9093",
+        "GRAFANATOOL": "True",
+        "GRAFANA_URL": "http://localhost:3000",
+        "LGTM_MCP_BASE_URL": "http://localhost",
+        "LGTM_TOKEN": "your_grafana_api_token"
+      }
+    }
+  }
+}
+```
+
+Runtime references require an alias-aware launcher such as GraphOS. Other
+launchers must omit those entries and inject the resolved values through their
+own runtime secret boundary.
+
+#### Streamable-HTTP Transport (networked / production)
+
+```json
+{
+  "mcpServers": {
+    "lgtm-mcp": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "lgtm-mcp[mcp]",
+        "lgtm-mcp",
+        "--transport",
+        "streamable-http",
+        "--port",
+        "8000"
+      ],
+      "env": {
+        "TRANSPORT": "streamable-http",
+        "HOST": "127.0.0.1",
+        "PORT": "8000",
+        "ALERTMANAGERTOOL": "True",
+        "ALERTMANAGER_URL": "http://localhost:9093",
+        "GRAFANATOOL": "True",
+        "GRAFANA_URL": "http://localhost:3000",
+        "LGTM_MCP_BASE_URL": "http://localhost",
+        "LGTM_TOKEN": "your_grafana_api_token"
+      }
+    }
+  }
+}
+```
+
+Alternatively, connect to a pre-deployed Streamable-HTTP instance by `url`:
+
+```json
+{
+  "mcpServers": {
+    "lgtm-mcp": {
+      "url": "http://localhost:8000/lgtm-mcp/mcp"
+    }
+  }
+}
+```
+
+Run a reviewed container image as a least-privilege stdio child (no
+listener or published port):
+
+```bash
+docker run -i --rm \
+  --read-only \
+  --cap-drop=ALL \
+  --security-opt=no-new-privileges \
+  --pids-limit=256 \
+  --tmpfs /tmp:rw,noexec,nosuid,nodev,size=64m \
+  -e TRANSPORT=stdio \
+  -e ALERTMANAGERTOOL=True \
+  -e ALERTMANAGER_URL=http://localhost:9093 \
+  -e GRAFANATOOL=True \
+  -e GRAFANA_URL=http://localhost:3000 \
+  -e LGTM_MCP_BASE_URL=http://localhost \
+  -e LGTM_TOKEN=your_grafana_api_token \
+  registry.example.invalid/lgtm-mcp@sha256:<digest> lgtm-mcp
+```
+
+For containerized network HTTP, supply an authenticated TLS ingress (or
+direct server TLS), exact `MCP_ALLOWED_HOSTS`, and an exact trusted-proxy
+CIDR policy through the operator-owned deployment profile. The generator
+does not emit an unauthenticated non-loopback listener.
+
+_Auto-generated from the code-read env surface (package vars) — do not edit._
+<!-- MCP-CONFIG-EXAMPLES:END -->
 
 ## Architecture
 
