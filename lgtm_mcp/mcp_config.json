@@ -7,7 +7,6 @@
         "lgtm_mcp.mcp_server"
       ],
       "env": {
-        "MCP_TOOL_MODE": "intent",
         "ALERTMANAGERTOOL": "True",
         "ALERTMANAGER_URL": "http://localhost:9093",
         "GRAFANATOOL": "True",
