@@ -1,5 +1,5 @@
 site_name: "lgtm-mcp"
-site_description: "LGTM observability API + MCP Server — typed, deterministic Grafana and Prometheus Alertmanager tools for the agent-utilities ecosystem."
+site_description: "LGTM observability API + MCP Server — typed, deterministic Grafana and Prometheus Alertmanager tools for the Graph OS ecosystem."
 site_url: "https://knuckles-team.github.io/lgtm-mcp/"
 repo_name: "Knuckles-Team/lgtm-mcp"
 repo_url: "https://github.com/Knuckles-Team/lgtm-mcp"

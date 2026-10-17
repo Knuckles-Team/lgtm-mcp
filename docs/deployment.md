@@ -221,7 +221,7 @@ For a remote HTTP server, point the client at `http://lgtm-mcp.example.invalid/m
 
 `lgtm-mcp` also ships a Pydantic-AI **agent server** (console script `lgtm-agent`)
 that connects to the MCP tool surface and exposes a conversational endpoint. It is
-built on the `agent-utilities` agent runtime and is installed with the `agent` extra:
+built on the `agent-connector-sdk` agent runtime and is installed with the `agent` extra:
 
 ```bash
 pip install "lgtm-mcp[agent]"

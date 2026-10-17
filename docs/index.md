@@ -1,6 +1,6 @@
 # lgtm-mcp
 
-LGTM observability **API + MCP server** for the agent-utilities ecosystem — typed,
+LGTM observability **API + MCP server** for the Graph OS ecosystem — typed,
 deterministic tools over Grafana and Prometheus Alertmanager for agentic alerting,
 silencing, and dashboard operations.
 
