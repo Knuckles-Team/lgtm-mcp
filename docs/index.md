@@ -1,6 +1,6 @@
 # lgtm-mcp
 
-LGTM observability **API + MCP server** for the Graph OS ecosystem — typed,
+LGTM observability **API + MCP server** for the Arbora ecosystem — typed,
 deterministic tools over Grafana and Prometheus Alertmanager for agentic alerting,
 silencing, and dashboard operations.
 

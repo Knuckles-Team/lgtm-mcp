@@ -2,12 +2,12 @@
 name: lgtm-mcp-operations
 skill_type: skill
 description: >-
-  Operate lgtm-mcp through its governed MCP and GraphOS capabilities, including lgtm alertmanager alerts, lgtm grafana dashboards. Use when a request requires this provider's read, change, automation, ingestion, troubleshooting, or evidence workflows.
+  Operate lgtm-mcp through its governed MCP and Arbora capabilities, including lgtm alertmanager alerts, lgtm grafana dashboards. Use when a request requires this provider's read, change, automation, ingestion, troubleshooting, or evidence workflows.
 ---
 
 # Lgtm Mcp Operations
 
-Use the provider's governed MCP tools through GraphOS delegation.
+Use the provider's governed MCP tools through Arbora delegation.
 
 ## Workflow
 
