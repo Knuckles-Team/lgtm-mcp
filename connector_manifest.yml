@@ -72,9 +72,23 @@ actions:
   description: 'Answers epistemic_status/why/what_changed queries over the shared knowledge graph: calibrated
     confidence, evidence/source citations, belief justification trees, bitemporal valid/tx history, and
     policy-redaction-aware provenance.'
+  label: ''
+  parameters: []
+  target_resource: null
+  conflict_policy: null
+  requires_approval: true
+  approval_class: unclassified
+  effects: []
 - id: run_graph_flow
   name: Graph Flow Execution
   description: Execute a workflow through the agent's graph orchestration engine
+  label: ''
+  parameters: []
+  target_resource: null
+  conflict_policy: null
+  requires_approval: true
+  approval_class: unclassified
+  effects: []
 events: []
 identity:
   id_field:
@@ -212,8 +226,8 @@ schema_mappings:
 sync:
 - preset: lgtm-dashboards
   server: lgtm-mcp
-  tool: lgtm_mcp_grafana
-  action: get_dashboards
+  tool: lgtm_get_dashboards
+  action: null
   records_path: ''
   id_field: uid
   title_field: title
@@ -221,11 +235,10 @@ sync:
   updated_field: ''
   pagination: none
   doc_type: dashboard
-  tool_schema_sha256: b0d7d43b791e0fe8c4b482e07616d05e088f4ee00011077ae68ecfca622a6a83
+  tool_schema_sha256: e2f5e5168269d4fe8767b885ef7d2df246bfc257f5f29b98c777d2d97a6b5d1a
   raw:
     server: lgtm-mcp
-    tool: lgtm_mcp_grafana
-    action: get_dashboards
+    tool: lgtm_get_dashboards
     records_path: ''
     id_field: uid
     title_field: title
@@ -233,9 +246,10 @@ sync:
     updated_field: ''
     pagination: none
     doc_type: dashboard
+    params_style: args
 provenance:
   generated_by: scripts/generate_connector_manifests.py
-  generated_at: '2026-08-26T13:42:55Z'
+  generated_at: '2026-10-18T00:00:00Z'
   source_artifacts:
   - lgtm_mcp/connectors/mcp_source_presets.json
   - lgtm_mcp/connectors/tool_schema_fingerprints.json
@@ -243,13 +257,13 @@ provenance:
   - lgtm_mcp/ontology/observability.ttl
   integrity:
     algorithm: urdna2015-sha256
-    hash: 665de7f07f2c74ef87ac27e3d6f6bc285b3f82e1c50bfd2eb0fe0bee4b407787
+    hash: d9428eabe7b50ebb186919862256bef438f894530cff8e7e133468befe055d0b
     triple_count: 86
   signer: UNSIGNED-PREVIEW
   signature_algorithm: none
   signing_public_key: ''
   signature: null
-  source_commit: a88cc87f95d1b37685357b7c207b9bf1c89ba76e
+  source_commit: ccd4405b65a9b9a31b3a7833b07db272fcd9631c
 policy:
   pii_fields: {}
   tenant_boundary: null
