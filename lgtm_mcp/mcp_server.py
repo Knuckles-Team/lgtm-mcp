@@ -18,7 +18,7 @@ from starlette.responses import JSONResponse
 from lgtm_mcp.api_client import Api
 from lgtm_mcp.auth import get_client
 
-__version__ = "0.15.0"
+__version__ = "2.2.0"
 logger = get_logger(name="lgtm_mcp")
 
 

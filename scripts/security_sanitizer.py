@@ -239,8 +239,7 @@ def _secret_violations_in_line(line: str, rel_path: Path, idx: int):
             match_str = match[0] if isinstance(match, tuple) else match
             if not is_placeholder(match_str):
                 violations.append(
-                    f"Potential unmasked secret ({label}) detected in "
-                    f"{rel_path}:{idx}"
+                    f"Potential unmasked secret ({label}) detected in {rel_path}:{idx}"
                 )
     return violations
 
@@ -276,8 +275,7 @@ def _scan_one_file(file_path: Path, repo_path: Path):
         violations.extend(_secret_scan_violations(file_path, repo_path))
     except (OSError, UnicodeError):
         violations.append(
-            f"Source file could not be inspected: "
-            f"'{file_path.relative_to(repo_path)}'"
+            f"Source file could not be inspected: '{file_path.relative_to(repo_path)}'"
         )
     return violations
 

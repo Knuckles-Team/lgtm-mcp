@@ -4,7 +4,7 @@
 from lgtm_mcp.api.api_client_alertmanager import Api as AlertmanagerApi
 from lgtm_mcp.api.api_client_grafana import Api as GrafanaApi
 
-__version__ = "0.15.0"
+__version__ = "2.2.0"
 
 
 class Api(AlertmanagerApi, GrafanaApi):

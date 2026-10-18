@@ -121,10 +121,12 @@ The operator can start the FastMCP server in stdio mode via Python module execut
 import asyncio
 from lgtm_mcp.mcp_server import get_mcp_instance
 
+
 async def main():
     mcp = get_mcp_instance()
     # Execute stdio loop or launch server
     print("MCP Server ready.")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

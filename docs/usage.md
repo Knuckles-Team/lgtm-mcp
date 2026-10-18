@@ -34,7 +34,7 @@ from the environment and call the read methods directly:
 ```python
 from lgtm_mcp.api_client import Api
 
-api = Api()        # reads ALERTMANAGER_URL / GRAFANA_URL / LGTM_TOKEN from the environment
+api = Api()  # reads ALERTMANAGER_URL / GRAFANA_URL / LGTM_TOKEN from the environment
 
 # Alertmanager reads
 status = api.get_status()
