@@ -4,12 +4,11 @@ import importlib
 import inspect
 from typing import Any
 
-__version__ = "0.15.0"
+__version__ = "2.2.0"
 __all__: list[str] = []
 
 CORE_MODULES = ["lgtm_mcp.api_client"]
 OPTIONAL_MODULES = {
-    "lgtm_mcp.agent_server": "agent",
     "lgtm_mcp.mcp_server": "mcp",
 }
 
@@ -42,7 +41,6 @@ def _import_module_safely(module_name: str):
 # by the substring that identifies the module in OPTIONAL_MODULES.
 _AVAILABILITY_FLAGS = {
     "_MCP_AVAILABLE": "mcp_server",
-    "_AGENT_AVAILABLE": "agent_server",
 }
 
 
