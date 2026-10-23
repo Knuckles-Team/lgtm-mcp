@@ -22,10 +22,8 @@ that is part_of a :Trace. A specialization of :Observation (CONCEPT:KG-2.156).""
 :UptimeMonitor — the substrate for failure-pattern analysis (CONCEPT:KG-2.159).""" ;
     rdfs:subClassOf :Observation .
 
-:Topic a owl:Class ;
-    rdfs:label "Topic" ;
-    rdfs:comment "A message/stream topic (e.g. Kafka) carrying events between services." ;
-    rdfs:subClassOf :DataSource .
+:Topic a owl:Class .
+
 
 :Trace a owl:Class ;
     rdfs:label "LLM Trace" ;
@@ -41,8 +39,8 @@ samples are :HeartbeatStat (CONCEPT:KG-2.159).""" ;
 
 <http://knuckles.team/kg/observability> a owl:Ontology ;
     rdfs:label "Observability & Streaming Ontology" ;
-    rdfs:comment "Ops/observability node types (CONCEPT:KG-2.9 / KG-2.156 / KG-2.159)." ;
-    owl:imports <http://knuckles.team/kg> .
+    rdfs:comment "Ops/observability node types (CONCEPT:KG-2.9 / KG-2.156 / KG-2.159)." .
+
 
 # --- LGTM / Alertmanager ingestion classes (CONCEPT:AU-KG.ingest.enterprise-source-extractor) ---
 # The lgtm-mcp connector natively ingests Grafana dashboards and Alertmanager
@@ -109,4 +107,3 @@ Slack, PagerDuty, webhook) that fired :Alert instances are routed to
     rdfs:comment "Links an :Alert to the :Silence currently muting it." ;
     rdfs:domain :Alert ;
     rdfs:range :Silence .
-

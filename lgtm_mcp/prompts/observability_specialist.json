@@ -4,8 +4,6 @@
   "schema_version": "1.0",
   "prompt_version": "0.1.0",
   "source": "lgtm-mcp",
-  "extends": "agent-connector-sdk:base",
-  "compose": "append",
   "description": "LGTM observability specialist: Grafana dashboards + Alertmanager alert/silence triage over the lgtm-mcp MCP server, mapped into the knowledge graph.",
   "metadata": {
     "topic": "LGTM Observability",

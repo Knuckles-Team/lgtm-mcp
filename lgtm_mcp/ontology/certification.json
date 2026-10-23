@@ -1,9 +1,6 @@
 {
   "api_version": "arbora.io/v1",
   "artifacts": {
-    "connector_manifest.yml": "80a5bb3731d692fc7c23c3f73bc57e47051d7a14bd571607bff7b1253e5b9d89",
-    "lgtm_mcp/connectors/mcp_source_presets.json": "daa5d091a9acdfbbc70b3cc906f8c44fe6cc929dc655d5b092d15e0c0dfb9c5a",
-    "lgtm_mcp/connectors/tool_schema_fingerprints.json": "8ac7435554e9f334c9c3c868813239429dd7f0d14478591b3e6b4b7cee3a5a07",
     "lgtm_mcp/ontology/fixtures/records.json": "9a576558e13459b5851511aef431bfdd492e324cf210bbbc471333921f9131c8",
     "lgtm_mcp/ontology/grafana.ttl": "6abe77e0c8edf487f1f08e04ffc76ea573f65319092974ba3ee69aa0cdd088da",
     "lgtm_mcp/ontology/mappings/source.yaml": "394826d8bbfeda6c2c97a7d048a2d9b7f6db9bf5d2cc9576c8db011e74200370",

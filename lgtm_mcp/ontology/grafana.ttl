@@ -42,8 +42,8 @@
     rules, and datasources, plus the relations that link them and the services
     they monitor.
 
-    CONCEPT:KG-2.9 — Self-registering source extractors (observability slice)""" ;
-    owl:imports <http://knuckles.team/kg> .
+    CONCEPT:KG-2.9 — Self-registering source extractors (observability slice)""" .
+
 
 :Dashboard a owl:Class ;
     rdfs:label "Dashboard" ;
@@ -56,4 +56,3 @@
 :Panel a owl:Class ;
     rdfs:label "Panel" ;
     rdfs:comment "A single visualization panel belonging to a Dashboard." .
-
