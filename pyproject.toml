@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lgtm-mcp"
-version = "2.3.1"
+version = "2.3.2"
 description = "LGTM Observability and Alertmanager MCP Server for Agentic AI!"
 readme = "README.md"
 classifiers = [ "Development Status :: 4 - Beta", "License :: OSI Approved :: MIT License", "Environment :: Console", "Operating System :: POSIX :: Linux", "Programming Language :: Python :: 3",]
@@ -41,6 +41,10 @@ lgtm-mcp = "lgtm_mcp.ontology"
 
 [project.entry-points."agent_connector_sdk.source_connector_providers"]
 lgtm-mcp = "lgtm_mcp.connectors"
+
+# The one declared connector identity: the fleet name (SDK-CONNECTOR-CONTROL-R071).
+[project.entry-points."agent_connector_sdk.connector"]
+lgtm-mcp = "lgtm_mcp"
 
 [tool.uv.workspace]
 members = ["."]

@@ -1,0 +1,22 @@
+{
+  "schema_version": 2,
+  "spec_id": "CONN-LGTM-MCP-CONNECTOR-CONTENT",
+  "owner_repo": "lgtm-mcp",
+  "delivery_state": "VERIFIED",
+  "requirement_ids": [
+    "CONN-LGTM-MCP-CONNECTOR-CONTENT-R001"
+  ],
+  "requirements": [
+    {
+      "id": "CONN-LGTM-MCP-CONNECTOR-CONTENT-R001",
+      "title": "Default content",
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "25d7f56f26e5"
+      ],
+      "verified_by": [
+        "tests/test_default_content_surfaces.py:15"
+      ]
+    }
+  ]
+}
