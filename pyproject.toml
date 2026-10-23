@@ -42,6 +42,10 @@ lgtm-mcp = "lgtm_mcp.ontology"
 [project.entry-points."agent_connector_sdk.source_connector_providers"]
 lgtm-mcp = "lgtm_mcp.connectors"
 
+# The one declared connector identity: the fleet name (SDK-CONNECTOR-CONTROL-R071).
+[project.entry-points."agent_connector_sdk.connector"]
+lgtm-mcp = "lgtm_mcp"
+
 [tool.uv.workspace]
 members = ["."]
 
