@@ -4,29 +4,24 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lgtm-mcp"
-version = "2.3.3"
+version = "2.3.4"
 description = "LGTM Observability and Alertmanager MCP Server for Agentic AI!"
 readme = "README.md"
 classifiers = [ "Development Status :: 4 - Beta", "License :: OSI Approved :: MIT License", "Environment :: Console", "Operating System :: POSIX :: Linux", "Programming Language :: Python :: 3",]
 requires-python = ">=3.12"
-dependencies = [ "agent-connector-sdk[mcp]>=0.4.1,<1.0.0", "requests>=2.34.2",]
+dependencies = [ "agent-connector-sdk[mcp]>=0.5.4,<0.6.0", "requests>=2.34.2",]
 [[project.authors]]
-name = "Project Maintainers"
-email = "maintainers@users.noreply.github.com"
+name = "Repository Maintainers"
+email = "maintainers@knuckles.team"
 
 [project.license]
 text = "MIT"
 
 [project.optional-dependencies]
-mcp = [ "agent-connector-sdk[mcp]>=0.4.1,<1.0.0",]
-all = [ "agent-connector-sdk[mcp]>=0.4.1,<1.0.0",]
 test = [ "pytest-xdist>=3.8.0", "pytest>=9.1.1", "pytest-asyncio>=1.4.0", "pytest-cov>=7.1.0",]
 
 [project.scripts]
-lgtm-mcp = "lgtm_mcp.mcp_server:mcp_server"
-
-[project.entry-points."agent_connector_sdk.skill_providers"]
-lgtm-mcp = "lgtm_mcp.skills"
+lgtm-mcp = "agent_connector_sdk.cli:serve"
 
 [project.entry-points."agent_connector_sdk.prompt_providers"]
 lgtm-mcp = "lgtm_mcp.prompts"
@@ -36,12 +31,10 @@ lgtm-mcp = "lgtm_mcp.prompts"
 # http://knuckles.team/kg/observability). The loader globs every *.ttl in the
 # module's ontology/ dir, so one entry-point covers both. Resolved via
 # iter_provider_dirs like the skill/prompt providers.
-[project.entry-points."agent_connector_sdk.ontology_providers"]
-lgtm-mcp = "lgtm_mcp.ontology"
 
 # The one declared connector identity: the fleet name (SDK-CONNECTOR-CONTROL-R071).
 [project.entry-points."agent_connector_sdk.connector"]
-lgtm-mcp = "lgtm_mcp"
+lgtm-mcp = "lgtm_mcp:connector"
 
 [tool.uv.workspace]
 members = ["."]
@@ -81,3 +74,9 @@ exempt = ["specs/*", "specs/**/*"]
 
 [tool.pytest.ini_options]
 markers = ["concept(id): associate a test with its existing concept identifier"]
+
+[tool.pipelines.container]
+compose_env = ["ALERTMANAGER_URL", "LGTM_TOKEN"]
+
+[tool.pipelines.ontology]
+shape_classes = ["Alert", "AlertGroup", "Dashboard", "DataSource", "Generation", "HeartbeatStat", "Panel", "Receiver", "Silence", "Topic", "Trace", "UptimeMonitor"]

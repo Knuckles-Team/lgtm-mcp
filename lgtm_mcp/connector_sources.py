@@ -7,9 +7,6 @@ Served live as ``connector://resources``. Regenerate by editing the declarations
 from __future__ import annotations
 
 from agent_connector_sdk.ingest.live_declaration import source_meta
-from agent_connector_sdk.ingest.sources import IngestSourceDeclaration, IngestSourceSpec
-
-CONNECTOR = "lgtm-mcp"
 
 SOURCES = (
     source_meta(
@@ -30,149 +27,67 @@ SOURCES = (
     ),
 )
 
+SCHEMA_VERSION = 2
+
+FIELD_SETS = {
+    "fields_1": {
+        "alertState": "xsd:string",
+        "dashboardTitle": "xsd:string",
+        "dataSourceType": "xsd:string",
+        "endsAt": "xsd:dateTime",
+        "severity": "xsd:string",
+        "silenceComment": "xsd:string",
+        "startsAt": "xsd:dateTime",
+    },
+}
+
 SCHEMA_MAPPINGS = {
     "Alert": {
-        "fields": {
-            "alertState": "xsd:string",
-            "dashboardTitle": "xsd:string",
-            "dataSourceType": "xsd:string",
-            "endsAt": "xsd:dateTime",
-            "severity": "xsd:string",
-            "silenceComment": "xsd:string",
-            "startsAt": "xsd:dateTime",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "Incident",
     },
     "AlertGroup": {
-        "fields": {
-            "alertState": "xsd:string",
-            "dashboardTitle": "xsd:string",
-            "dataSourceType": "xsd:string",
-            "endsAt": "xsd:dateTime",
-            "severity": "xsd:string",
-            "silenceComment": "xsd:string",
-            "startsAt": "xsd:dateTime",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "System",
     },
     "Dashboard": {
-        "fields": {
-            "alertState": "xsd:string",
-            "dashboardTitle": "xsd:string",
-            "dataSourceType": "xsd:string",
-            "endsAt": "xsd:dateTime",
-            "severity": "xsd:string",
-            "silenceComment": "xsd:string",
-            "startsAt": "xsd:dateTime",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": None,
     },
     "DataSource": {
-        "fields": {
-            "alertState": "xsd:string",
-            "dashboardTitle": "xsd:string",
-            "dataSourceType": "xsd:string",
-            "endsAt": "xsd:dateTime",
-            "severity": "xsd:string",
-            "silenceComment": "xsd:string",
-            "startsAt": "xsd:dateTime",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": None,
     },
     "Generation": {
-        "fields": {
-            "alertState": "xsd:string",
-            "dashboardTitle": "xsd:string",
-            "dataSourceType": "xsd:string",
-            "endsAt": "xsd:dateTime",
-            "severity": "xsd:string",
-            "silenceComment": "xsd:string",
-            "startsAt": "xsd:dateTime",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "Observation",
     },
     "HeartbeatStat": {
-        "fields": {
-            "alertState": "xsd:string",
-            "dashboardTitle": "xsd:string",
-            "dataSourceType": "xsd:string",
-            "endsAt": "xsd:dateTime",
-            "severity": "xsd:string",
-            "silenceComment": "xsd:string",
-            "startsAt": "xsd:dateTime",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "Observation",
     },
     "Panel": {
-        "fields": {
-            "alertState": "xsd:string",
-            "dashboardTitle": "xsd:string",
-            "dataSourceType": "xsd:string",
-            "endsAt": "xsd:dateTime",
-            "severity": "xsd:string",
-            "silenceComment": "xsd:string",
-            "startsAt": "xsd:dateTime",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": None,
     },
     "Receiver": {
-        "fields": {
-            "alertState": "xsd:string",
-            "dashboardTitle": "xsd:string",
-            "dataSourceType": "xsd:string",
-            "endsAt": "xsd:dateTime",
-            "severity": "xsd:string",
-            "silenceComment": "xsd:string",
-            "startsAt": "xsd:dateTime",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "System",
     },
     "Silence": {
-        "fields": {
-            "alertState": "xsd:string",
-            "dashboardTitle": "xsd:string",
-            "dataSourceType": "xsd:string",
-            "endsAt": "xsd:dateTime",
-            "severity": "xsd:string",
-            "silenceComment": "xsd:string",
-            "startsAt": "xsd:dateTime",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "System",
     },
     "Topic": {
-        "fields": {
-            "alertState": "xsd:string",
-            "dashboardTitle": "xsd:string",
-            "dataSourceType": "xsd:string",
-            "endsAt": "xsd:dateTime",
-            "severity": "xsd:string",
-            "silenceComment": "xsd:string",
-            "startsAt": "xsd:dateTime",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "DataSource",
     },
     "Trace": {
-        "fields": {
-            "alertState": "xsd:string",
-            "dashboardTitle": "xsd:string",
-            "dataSourceType": "xsd:string",
-            "endsAt": "xsd:dateTime",
-            "severity": "xsd:string",
-            "silenceComment": "xsd:string",
-            "startsAt": "xsd:dateTime",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "Episode",
     },
     "UptimeMonitor": {
-        "fields": {
-            "alertState": "xsd:string",
-            "dashboardTitle": "xsd:string",
-            "dataSourceType": "xsd:string",
-            "endsAt": "xsd:dateTime",
-            "severity": "xsd:string",
-            "silenceComment": "xsd:string",
-            "startsAt": "xsd:dateTime",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "System",
     },
 }
@@ -239,22 +154,3 @@ RESOURCES = (
         "name": "UptimeMonitor",
     },
 )
-
-
-def declaration() -> IngestSourceDeclaration:
-    """The declaration the server assembles from this module."""
-    specs = []
-    for item in SOURCES:
-        for entry in item["connector_sources"]:
-            body = {k: v for k, v in entry.items() if k not in ("tool", "mapping")}
-            specs.append(
-                IngestSourceSpec.model_validate({**body, "tools": (entry["tool"],)})
-            )
-    return IngestSourceDeclaration.model_validate(
-        {
-            "connector": CONNECTOR,
-            "sources": specs,
-            "schema_mappings": SCHEMA_MAPPINGS,
-            "resources": RESOURCES,
-        }
-    )
