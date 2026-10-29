@@ -9,7 +9,7 @@ description = "LGTM Observability and Alertmanager MCP Server for Agentic AI!"
 readme = "README.md"
 classifiers = [ "Development Status :: 4 - Beta", "License :: OSI Approved :: MIT License", "Environment :: Console", "Operating System :: POSIX :: Linux", "Programming Language :: Python :: 3",]
 requires-python = ">=3.12"
-dependencies = [ "scion-sdk[mcp]>=0.5.6,<0.6.0", "requests>=2.34.2",]
+dependencies = [ "scion-sdk[mcp]>=0.5.9,<0.6.0", "requests>=2.34.2",]
 [[project.authors]]
 name = "Repository Maintainers"
 email = "maintainers@knuckles.team"
@@ -32,7 +32,7 @@ lgtm-mcp = "lgtm_mcp.prompts"
 # module's ontology/ dir, so one entry-point covers both. Resolved via
 # iter_provider_dirs like the skill/prompt providers.
 
-# The one declared connector identity: the fleet name (SDK-CONNECTOR-CONTROL-R071).
+# The one declared connector identity: the fleet name (SCION-CONNECTOR-CONTROL-R071).
 [project.entry-points."agent_connector_sdk.connector"]
 lgtm-mcp = "lgtm_mcp:connector"
 
