@@ -10,7 +10,7 @@ license: MIT
 tags: [lgtm, alertmanager, grafana, development, connector, test, gates]
 tier: repository
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.1.0'
 ---
 
@@ -20,7 +20,7 @@ This repository owns the LGTM connector's Alertmanager and Grafana API facade,
 authentication boundary, action-routed MCP tools, observability ontology and
 knowledge-graph ingestion mappings, and packaged connector content. Shared
 connector contracts, transports, TLS profiles, and credential helpers belong to
-`agent-connector-sdk`; admission, serving, and durable graph state belong to
+`scion-sdk`; admission, serving, and durable graph state belong to
 their owning repositories. Read `AGENTS.md` before changing code and keep
 credentials, private endpoints, tenant data, and customer records out of source,
 logs, fixtures, and skill content.
@@ -51,7 +51,7 @@ spec row in the commit trailer.
 - Every delivered requirement needs a bound focused test. Generated
   `specs/*/status.json` files come from the shared hooks; never hand-edit them.
 - Keep `skills/**`, `ontology/**`, prompts, and `mcp_config.json` coherent with
-  the existing package data and the `agent_connector_sdk.connector` entry point
+  the existing package data and the `scion_sdk.connector` entry point
   (`lgtm-mcp = "lgtm_mcp:connector"`). Use the shared Pages dashboard config
   and workflow callers already checked in; do not add a second publisher.
 
@@ -94,7 +94,7 @@ copy those hooks locally or bypass a failing check.
 
 ## Packaging and publication
 
-`pyproject.toml` declares the `agent_connector_sdk.connector` entry point
+`pyproject.toml` declares the `scion_sdk.connector` entry point
 `lgtm-mcp = "lgtm_mcp:connector"` and packages `skills/**`, `ontology/**`,
 `connectors/**`, prompts, and `mcp_config.json`. For a genuine packaged-content
 release, keep the project version, `CHANGELOG.md`, and the editable `lgtm-mcp`

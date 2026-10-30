@@ -3,7 +3,7 @@ CONCEPT:LG-OS.governance.lgtm-2
 """
 
 import pytest
-from agent_connector_sdk.mcp.action_dispatch import resolve_action
+from scion_sdk.mcp.action_dispatch import resolve_action
 
 from lgtm_mcp.mcp_server import ALERTMANAGER_ACTIONS, GRAFANA_ACTIONS
 

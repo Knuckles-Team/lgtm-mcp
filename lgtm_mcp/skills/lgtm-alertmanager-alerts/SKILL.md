@@ -11,7 +11,7 @@ description: >-
 license: MIT
 tags: [lgtm, alertmanager, alerts, silences, observability, mcp]
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.1.0'
 ---
 # LGTM Alertmanager Alerts
