@@ -1,7 +1,7 @@
 """Grafana & Observability ontology contribution (CONCEPT:AU-KG.ontology.package-federation-migration).
 
 Data-only subpackage: it carries two ``owl:Ontology`` modules which the
-agent-connector-sdk hub federates in via the ``agent_connector_sdk.ontology_providers``
+scion-sdk hub federates in via the ``scion_sdk.ontology_providers``
 entry-point (the loader globs every ``*.ttl`` in this directory):
 
 * ``grafana.ttl`` — ``http://knuckles.team/kg/grafana`` (Grafana dashboards,

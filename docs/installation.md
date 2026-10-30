@@ -21,8 +21,8 @@ The base install is intentionally minimal. Install the extra for what the operat
 
 | Extra | Install | Pulls in |
 |---|---|---|
-| `mcp` | `pip install "lgtm-mcp[mcp]"` | FastMCP MCP-server runtime (`agent-connector-sdk[mcp]`) |
-| `agent` | `pip install "lgtm-mcp[agent]"` | Pydantic-AI agent + Logfire tracing (`agent-connector-sdk[agent-runtime,logfire]`) |
+| `mcp` | `pip install "lgtm-mcp[mcp]"` | FastMCP MCP-server runtime (`scion-sdk[mcp]`) |
+| `agent` | `pip install "lgtm-mcp[agent]"` | Pydantic-AI agent + Logfire tracing (`scion-sdk[agent-runtime,logfire]`) |
 | `all` | `pip install "lgtm-mcp[all]"` | Everything above |
 | `test` | `pip install "lgtm-mcp[test]"` | `pytest`, `pytest-asyncio`, `pytest-cov`, `pytest-xdist` |
 

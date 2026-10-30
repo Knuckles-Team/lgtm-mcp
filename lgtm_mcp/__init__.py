@@ -1,6 +1,6 @@
 """CONCEPT:AU-ECO.messaging.native-backend-abstraction Unified ecosystem initialization dynamic check."""
 
-from agent_connector_sdk.connector import Connector
+from scion_sdk.connector import Connector
 
 from lgtm_mcp.api_client import Api
 from lgtm_mcp.auth import get_client

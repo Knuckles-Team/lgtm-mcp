@@ -1,6 +1,6 @@
 """Native epistemic-graph ingestion for LGTM observability records.
 
-All writes use ``agent_connector_sdk.ingest``'s generated SourceIngest client,
+All writes use ``scion_sdk.ingest``'s generated SourceIngest client,
 not a local ingestion helper. Nodes use canonical ``node_type`` and edges use
 canonical ``relationship``.
 """
@@ -10,7 +10,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from agent_connector_sdk.ingest import (
+from scion_sdk.ingest import (
     ChangeSet,
     Document,
     Entity,
