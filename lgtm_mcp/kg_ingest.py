@@ -1,4 +1,4 @@
-"""Native epistemic-graph ingestion for LGTM observability records.
+"""Native medulla ingestion for LGTM observability records.
 
 All writes use ``scion_sdk.ingest``'s generated SourceIngest client,
 not a local ingestion helper. Nodes use canonical ``node_type`` and edges use

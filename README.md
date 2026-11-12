@@ -68,8 +68,8 @@ Pick the extra that matches what the operator want to run:
 
 | Extra | Installs | Use when |
 |-------|----------|----------|
-| `lgtm-mcp[mcp]` | Connector-focused MCP server (`scion-sdk[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator only run the **MCP server** (smallest install / image) |
-| `lgtm-mcp[agent]` | Agent runtime (`scion-sdk[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | The operator run the **integrated agent** |
+| `lgtm-mcp[mcp]` | Connector-focused MCP server (`scion-sdk[mcp]` — FastMCP/FastAPI + `medulla[full]`) | The operator only run the **MCP server** (smallest install / image) |
+| `lgtm-mcp[agent]` | Agent runtime (`scion-sdk[agent-runtime,logfire]` — model orchestration + `medulla[full]`) | The operator run the **integrated agent** |
 | `lgtm-mcp[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ```bash
@@ -89,8 +89,8 @@ One multi-stage `docker/Dockerfile` builds two right-sized images, selected by `
 
 | Image tag | Build target | Contents | Entrypoint |
 |-----------|--------------|----------|------------|
-| `example/lgtm-mcp:mcp` | `--target mcp` | `lgtm-mcp[mcp]` — **connector-focused**, includes `epistemic-graph[full]`; no model-orchestration stack | `lgtm-mcp` |
-| `example/lgtm-mcp@sha256:<digest>` | `--target agent` (default) | `lgtm-mcp[agent]` — **agent runtime**, model orchestration + `epistemic-graph[full]` | `lgtm-agent` |
+| `example/lgtm-mcp:mcp` | `--target mcp` | `lgtm-mcp[mcp]` — **connector-focused**, includes `medulla[full]`; no model-orchestration stack | `lgtm-mcp` |
+| `example/lgtm-mcp@sha256:<digest>` | `--target agent` (default) | `lgtm-mcp[agent]` — **agent runtime**, model orchestration + `medulla[full]` | `lgtm-agent` |
 
 ```bash
 docker build --target mcp   -t example/lgtm-mcp:mcp    docker/   # connector-focused MCP server
@@ -100,16 +100,16 @@ docker build --target agent -t example/lgtm-mcp:agent-local docker/   # agent ru
 `docker/mcp.compose.yml` runs the connector-focused `:mcp` server; `docker/compose.yml` runs the
 agent (`immutable agent digest`) with a co-located `:mcp` sidecar.
 
-### Knowledge-graph database (`epistemic-graph`)
+### Knowledge-graph database (`medulla`)
 
-Both `[mcp]` and `[agent]` carry the **epistemic-graph** engine through the required
-Agent Utilities core dependency (`epistemic-graph[full]`). The `[mcp]` extra keeps
+Both `[mcp]` and `[agent]` carry the **medulla** engine through the required
+Meristem core dependency (`medulla[full]`). The `[mcp]` extra keeps
 the server connector-focused; `[agent]` also enables model orchestration. Local
 deployments can use the bundled engine. For production or shared state, run
-**epistemic-graph as a dedicated database service** and configure the runtime to use it.
+**medulla as a dedicated database service** and configure the runtime to use it.
 Deployment recipes (single-node + Raft HA), connection configuration, and architecture
 diagrams are documented in the
-[epistemic-graph deployment guide](https://knuckles-team.github.io/epistemic-graph/deployment/).
+[medulla deployment guide](https://knuckles-team.github.io/medulla/deployment/).
 
 ---
 
@@ -243,8 +243,8 @@ Auto-generated — do not edit between the markers below.
 
 | MCP Tool | Kind | Description |
 |----------|------|-------------|
-| `lgtm_ingest_alerts` | intent | Natively ingest Alertmanager alerts into epistemic-graph as typed :Alert nodes. |
-| `lgtm_ingest_dashboards` | intent | Natively ingest Grafana dashboards into epistemic-graph as typed :Dashboard nodes. |
+| `lgtm_ingest_alerts` | intent | Natively ingest Alertmanager alerts into medulla as typed :Alert nodes. |
+| `lgtm_ingest_dashboards` | intent | Natively ingest Grafana dashboards into medulla as typed :Dashboard nodes. |
 
 _4 intent tool(s) · 0 operation(s). Call an operation as `act(action='<operation>', params={...})` (`ask` for reads); `find(action='describe', params={'action': '<operation>'})` returns its arguments. An operation is enabled unless its `<DOMAIN>TOOL` toggle is set false. Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
@@ -258,8 +258,8 @@ See [docs/overview.md](docs/overview.md) or [docs/concepts.md](docs/concepts.md)
 <!-- MCP-CONFIG-EXAMPLES:START -->
 
 > **Install the connector-focused `[mcp]` extra.** Examples use `lgtm-mcp[mcp]` to add
-> FastMCP / FastAPI through `scion-sdk[mcp]`; the required Agent Utilities core
-> still carries `epistemic-graph[full]`. The `[agent-runtime]` extra additionally
+> FastMCP / FastAPI through `scion-sdk[mcp]`; the required Meristem core
+> still carries `medulla[full]`. The `[agent-runtime]` extra additionally
 > enables model orchestration.
 
 #### stdio Transport (local IDEs — Cursor, Claude Desktop, VS Code)
@@ -365,7 +365,7 @@ _Auto-generated from the code-read env surface (package vars) — do not edit._
 
 ## Architecture
 
-This package uses the standardized Agent-Utilities dynamic facade architecture:
+This package uses the standardized Meristem dynamic facade architecture:
 
 ```mermaid
 graph TD
