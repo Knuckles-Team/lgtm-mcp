@@ -9,7 +9,7 @@ connector = Connector(
     api=Api,
     get_client=get_client,
     tools="lgtm_mcp.mcp_server",
-    instructions="LGTM MCP MCP Server - Managed dynamic operations.",
+    instructions="LGTM MCP MCP Server - one typed tool per Alertmanager and Grafana operation.",
     transports=(
         "stdio",
         "streamable-http",

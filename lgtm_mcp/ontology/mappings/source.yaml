@@ -4,8 +4,7 @@ ontology_source: grafana
 sync:
 - preset: lgtm-dashboards
   server: lgtm-mcp
-  tool: lgtm_mcp_grafana
-  action: get_dashboards
+  tool: lgtm_get_dashboards
   records_path: ''
   id_field: uid
   title_field: title

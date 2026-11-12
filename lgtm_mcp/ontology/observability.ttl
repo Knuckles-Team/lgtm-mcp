@@ -52,20 +52,20 @@ samples are :HeartbeatStat (CONCEPT:KG-2.159).""" ;
 :AlertGroup a owl:Class ;
     rdfs:label "Alert Group" ;
     rdfs:comment """An Alertmanager grouping of alerts that share a label set / route
-(lgtm_mcp_alertmanager get_alert_groups). Groups active :Alert instances.""" ;
+(lgtm_get_alert_groups). Groups active :Alert instances.""" ;
     rdfs:subClassOf :System .
 
 :Silence a owl:Class ;
     rdfs:label "Silence" ;
     rdfs:comment """An Alertmanager silence: a time-bounded matcher set that mutes
-matching :Alert notifications (lgtm_mcp_alertmanager get_silences / create_silence).""" ;
+matching :Alert notifications (lgtm_get_silences / lgtm_create_silence).""" ;
     rdfs:subClassOf :System .
 
 :Receiver a owl:Class ;
     rdfs:label "Receiver" ;
     rdfs:comment """An Alertmanager receiver — a notification integration (email,
 Slack, PagerDuty, webhook) that fired :Alert instances are routed to
-(lgtm_mcp_alertmanager get_receivers).""" ;
+(lgtm_get_receivers).""" ;
     rdfs:subClassOf :System .
 
 :alertState a owl:DatatypeProperty ;

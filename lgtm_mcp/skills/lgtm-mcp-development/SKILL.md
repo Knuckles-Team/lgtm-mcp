@@ -17,7 +17,7 @@ metadata:
 # lgtm-mcp development
 
 This repository owns the LGTM connector's Alertmanager and Grafana API facade,
-authentication boundary, action-routed MCP tools, observability ontology and
+authentication boundary, typed MCP tools, observability ontology and
 knowledge-graph ingestion mappings, and packaged connector content. Shared
 connector contracts, transports, TLS profiles, and credential helpers belong to
 `scion-sdk`; admission, serving, and durable graph state belong to
@@ -42,7 +42,7 @@ spec row in the commit trailer.
   `LGTM_MCP_USERNAME`, and `LGTM_MCP_PASSWORD` handling in `lgtm_mcp/auth.py`.
   Keep TLS resolution through `resolve_tls_profile("lgtm")`; never add a
   verification bypass or print credentials.
-- Keep the action-routed tools and action allowlists in
+- Keep the hand-written ingest tools in
   `lgtm_mcp/mcp_server.py`. Preserve the best-effort Alertmanager and Grafana
   ingestion boundary in `lgtm_mcp/kg_ingest.py` and keep source declarations in
   `lgtm_mcp/connector_sources.py` explicit and tenant-neutral.
@@ -80,7 +80,7 @@ copy those hooks locally or bypass a failing check.
 ## Connector-specific checks
 
 - Preserve the Alertmanager and Grafana API method names, endpoint selection,
-  action allowlists, and `resolve_action` behavior when changing operations.
+  and the one-tool-per-method serving when changing operations.
   Add focused mocked request tests for a changed provider path.
 - Keep the SDK TLS profile and credential handling at the existing client
   boundary. Validate environment settings before provider calls and translate

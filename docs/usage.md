@@ -6,20 +6,20 @@ as a **Python API** (`Api`) the operator import. A deeper architectural descript
 
 ## As an MCP server
 
-Once [deployed](deployment.md), the server registers two action-dispatch tools. Each
-takes an `action` plus a `params_json` string of arguments matching the underlying
-client method:
+Once [deployed](deployment.md), the server registers one typed tool per Alertmanager
+and Grafana operation, each taking its arguments by name:
 
-| Tool | Tag | Actions |
-|---|---|---|
-| `lgtm_mcp_alertmanager` | `alertmanager` | `get_status`, `get_receivers`, `get_silences`, `post_silences`, `create_silence`, `get_silence`, `delete_silence`, `get_alerts`, `post_alerts`, `create_alerts`, `get_alert_groups` |
-| `lgtm_mcp_grafana` | `grafana` | `get_dashboards`, `create_dashboard`, `query_datasource` |
+| Area | Tools |
+|---|---|
+| Alertmanager | `lgtm_get_status`, `lgtm_get_receivers`, `lgtm_get_silences`, `lgtm_post_silences`, `lgtm_create_silence`, `lgtm_get_silence`, `lgtm_delete_silence`, `lgtm_get_alerts`, `lgtm_post_alerts`, `lgtm_create_alerts`, `lgtm_get_alert_groups` |
+| Grafana | `lgtm_get_dashboards`, `lgtm_create_dashboard`, `lgtm_query_datasource` |
+| Knowledge graph | `lgtm_ingest_alerts`, `lgtm_ingest_dashboards` |
 
 Example agent prompts that map onto these tools:
 
-- *"List the alerts currently firing in Alertmanager"* → `lgtm_mcp_alertmanager` with `action=get_alerts`
-- *"Silence the `HighLatency` alert for two hours"* → `lgtm_mcp_alertmanager` with `action=create_silence`
-- *"What Grafana dashboards exist?"* → `lgtm_mcp_grafana` with `action=get_dashboards`
+- *"List the alerts currently firing in Alertmanager"* → `lgtm_get_alerts`
+- *"Silence the `HighLatency` alert for two hours"* → `lgtm_create_silence`
+- *"What Grafana dashboards exist?"* → `lgtm_get_dashboards`
 
 This MCP server also supports dynamic toolset selection and tag visibility filtering
 at runtime (via `--tools` / `--toolsets`, the `MCP_ENABLED_TOOLS` family of

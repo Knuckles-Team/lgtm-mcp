@@ -245,8 +245,6 @@ Auto-generated — do not edit between the markers below.
 |----------|------|-------------|
 | `lgtm_ingest_alerts` | intent | Natively ingest Alertmanager alerts into epistemic-graph as typed :Alert nodes. |
 | `lgtm_ingest_dashboards` | intent | Natively ingest Grafana dashboards into epistemic-graph as typed :Dashboard nodes. |
-| `lgtm_mcp_alertmanager` | intent | Manage LGTM MCP Alertmanager operations. |
-| `lgtm_mcp_grafana` | intent | Manage LGTM MCP Grafana operations. |
 
 _4 intent tool(s) · 0 operation(s). Call an operation as `act(action='<operation>', params={...})` (`ask` for reads); `find(action='describe', params={'action': '<operation>'})` returns its arguments. An operation is enabled unless its `<DOMAIN>TOOL` toggle is set false. Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->

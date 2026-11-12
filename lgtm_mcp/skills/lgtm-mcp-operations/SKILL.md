@@ -31,3 +31,15 @@ Use the provider's governed MCP tools through Arbora delegation.
 
 Read [the workflow catalog](references/catalog.md) only when the request needs a
 provider-specific procedure, parameter map, script, or reference asset.
+
+## Tools by task
+
+Every served tool is named below under the task it serves. Pass each argument by name.
+
+- **check-alertmanager-health**: Read the Alertmanager status and its notification receivers. `lgtm_get_status`, `lgtm_get_receivers`
+- **triage-firing-alerts**: List the alerts that are firing and the groups they route into. `lgtm_get_alerts`, `lgtm_get_alert_groups`
+- **silence-an-alert**: Find matching alerts, create a time-boxed silence and expire it when the work is done. `lgtm_get_alerts`, `lgtm_create_silence`, `lgtm_get_silences`, `lgtm_get_silence`, `lgtm_post_silences`, `lgtm_delete_silence`
+- **send-test-alert**: Post alerts to Alertmanager to test routing. `lgtm_create_alerts`, `lgtm_post_alerts`, `lgtm_get_alerts`
+- **inspect-dashboards**: List dashboards and query the data source behind one. `lgtm_get_dashboards`, `lgtm_query_datasource`
+- **publish-dashboard**: Create or overwrite a dashboard and confirm it by listing dashboards. `lgtm_create_dashboard`, `lgtm_get_dashboards`
+- **ingest-observability-state**: Push alerts and dashboards into the knowledge graph. `lgtm_ingest_alerts`, `lgtm_ingest_dashboards`
