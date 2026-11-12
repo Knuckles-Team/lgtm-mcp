@@ -27,7 +27,7 @@ lgtm-mcp = "scion_sdk.cli:serve"
 lgtm-mcp = "lgtm_mcp.prompts"
 
 # CONCEPT:AU-KG.ontology.package-federation-migration — federate this package's OWL/RDF ontology modules into the
-# scion-sdk>=0.11.0,<0.12 hub (https://knuckles-team.github.io/ontology/connector/grafana and
+# scion-sdk hub (https://knuckles-team.github.io/ontology/connector/grafana and
 # https://knuckles-team.github.io/ontology/connector/observability). The loader globs every *.ttl in the
 # module's ontology/ dir, so one entry-point covers both. Resolved via
 # iter_provider_dirs like the skill/prompt providers.
