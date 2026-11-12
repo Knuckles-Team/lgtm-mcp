@@ -21,8 +21,8 @@ and operate dashboards without handling HTTP transport directly. It provides:
 
 - **`Api`** — a dynamic facade (`lgtm_mcp.api_client.Api`) composed from the
   Alertmanager and Grafana clients, with credential authentication and SSL handling.
-- **Action-dispatch MCP tools** — `lgtm_mcp_alertmanager` and `lgtm_mcp_grafana`,
-  each routing a named action to the underlying client method.
+- **Typed MCP tools** — one tool per Alertmanager and Grafana operation
+  (`lgtm_get_alerts`, `lgtm_create_silence`, `lgtm_get_dashboards`, ...).
 - **An optional agent server** — a Pydantic-AI agent (`lgtm-agent`) that connects to
   the MCP tool surface for conversational observability operations.
 

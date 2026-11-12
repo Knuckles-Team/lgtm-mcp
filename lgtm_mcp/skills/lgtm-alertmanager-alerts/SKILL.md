@@ -42,26 +42,20 @@ Connect via the `mcp-client` skill against the **`lgtm-mcp`** MCP server.
 | `LGTM_MCP_USERNAME` / `LGTM_MCP_PASSWORD` | one of | Basic-auth instead of a token |
 | `LGTM_MCP_SSL_VERIFY` | optional | TLS verification toggle |
 
-`MCP_TOOL_MODE` (`condensed`|`verbose`|`both`) selects the condensed surface (used
-below) vs. the one-to-one verbose tools.
 
-## Tools & actions
-Prefer the **condensed** tool; it takes `action` + a `params_json` **JSON string**
-whose keys are passed straight to the client method.
+## Tools
+One typed tool per operation; pass each argument by name.
 
-| Condensed tool | Actions |
-|----------------|---------|
-| `lgtm_mcp_alertmanager` | `get_status`, `get_receivers`, `get_alerts`, `get_alert_groups`, `get_silences`, `get_silence`, `post_silences`, `create_silence`, `delete_silence`, `post_alerts`, `create_alerts` |
-| `lgtm_ingest_alerts` | (KG) list alerts + push `:Alert`/`:Receiver` nodes |
+| Tool | Use |
+|------|-----|
+| `lgtm_get_status`, `lgtm_get_receivers` | Alertmanager status and its receivers |
+| `lgtm_get_alerts`, `lgtm_get_alert_groups` | Read alerts, or alerts grouped by route |
+| `lgtm_get_silences`, `lgtm_get_silence` | Read silences |
+| `lgtm_create_silence`, `lgtm_post_silences`, `lgtm_delete_silence` | Create, update or expire a silence |
+| `lgtm_create_alerts`, `lgtm_post_alerts` | Post alerts to Alertmanager |
+| `lgtm_ingest_alerts` | List alerts and push `:Alert`/`:Receiver` nodes into the knowledge graph |
 
-### Key parameters
-- `get_alerts` — `active`, `silenced`, `inhibited`, `unprocessed` (bools); `filter`
-  (list of `label=value` matcher strings); `receiver` (regex).
-- `create_silence` — `matchers` (list), `starts_at`, `ends_at` (ISO-8601),
-  `comment`, `created_by`.
-- `get_silence` / `delete_silence` — `silence_id`.
-
-## Recipes (`params_json`)
+## Recipes (tool arguments)
 List active critical alerts:
 ```json
 {"active":true,"silenced":false,"inhibited":false,"filter":["severity=critical"]}
@@ -76,7 +70,6 @@ Delete a silence:
 ```
 
 ## Gotchas
-- `params_json` is a **string** of JSON, not an object — serialize it.
 - Matchers for `create_silence` are objects (`name`/`value`/`isRegex`), while the
   `filter` param on reads is a list of `"name=value"` **strings** — different shapes.
 - `starts_at`/`ends_at` must be RFC-3339/ISO-8601 UTC timestamps.

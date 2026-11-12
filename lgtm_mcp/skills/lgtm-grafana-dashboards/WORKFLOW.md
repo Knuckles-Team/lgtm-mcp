@@ -30,25 +30,18 @@ Connect via the `mcp-client` skill against the **`lgtm-mcp`** MCP server.
 | `LGTM_TLS_PROFILE` | optional | Named AgentConfig TLS profile; peer and hostname verification are mandatory. |
 | `LGTM_TLS_PROFILE_REF` | optional | Reference-backed AgentConfig TLS profile selector. |
 
-`MCP_TOOL_MODE` (`condensed`|`verbose`|`both`) selects the condensed surface (used
-below) vs. the one-to-one verbose tools.
 
-## Tools & actions
-Prefer the **condensed** tool; it takes `action` + a `params_json` **JSON string**
-whose keys are passed straight to the client method.
+## Tools
+One typed tool per operation; pass each argument by name.
 
-| Condensed tool | Actions |
-|----------------|---------|
-| `lgtm_mcp_grafana` | `get_dashboards`, `create_dashboard`, `query_datasource` |
-| `lgtm_ingest_dashboards` | (KG) list dashboards + push `:Dashboard` nodes |
+| Tool | Use |
+|------|-----|
+| `lgtm_get_dashboards` | List dashboards (the search result) |
+| `lgtm_create_dashboard` | Create or overwrite a dashboard |
+| `lgtm_query_datasource` | Run a raw query against a data source |
+| `lgtm_ingest_dashboards` | List dashboards and push `:Dashboard` nodes into the knowledge graph |
 
-### Key parameters
-- `get_dashboards` — no parameters; returns the `/api/search` result list.
-- `create_dashboard` — `dashboard_data`: the full dashboards-db payload
-  (`{"dashboard": {...}, "folderId": N, "overwrite": bool}`).
-- `query_datasource` — `datasource_id` (int) + `query` (raw string).
-
-## Recipes (`params_json`)
+## Recipes (tool arguments)
 List all dashboards:
 ```json
 {}
@@ -63,7 +56,6 @@ Query a datasource:
 ```
 
 ## Gotchas
-- `params_json` is a **string** of JSON, not an object — serialize it.
 - `get_dashboards` returns `dash-folder` rows alongside `dash-db` rows; the KG
   ingestion skips folders and only maps real dashboards.
 - `query_datasource` posts to the legacy `/api/tsdb/query` proxy with

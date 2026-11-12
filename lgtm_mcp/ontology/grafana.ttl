@@ -56,3 +56,6 @@
 :Panel a owl:Class ;
     rdfs:label "Panel" ;
     rdfs:comment "A single visualization panel belonging to a Dashboard." .
+
+# connector-surface core roll-up
+<http://knuckles.team/kg#DataSource> rdfs:subClassOf <http://knuckles.team/kg#ConfigurationItem> .
