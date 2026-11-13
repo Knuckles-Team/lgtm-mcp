@@ -4,9 +4,9 @@ Data-only subpackage: it carries two ``owl:Ontology`` modules which the
 scion-sdk hub federates in via the ``scion_sdk.ontology_providers``
 entry-point (the loader globs every ``*.ttl`` in this directory):
 
-* ``grafana.ttl`` — ``http://knuckles.team/kg/grafana`` (Grafana dashboards,
+* ``grafana.ttl`` — ``https://knuckles-team.github.io/ontology/connector/grafana`` (Grafana dashboards,
   panels, alert rules, datasources and the services they monitor).
-* ``observability.ttl`` — ``http://knuckles.team/kg/observability`` (ops /
+* ``observability.ttl`` — ``https://knuckles-team.github.io/ontology/connector/observability`` (ops /
   observability node types and streaming observations).
 
 It holds no business logic and no heavy imports so the hub can resolve it

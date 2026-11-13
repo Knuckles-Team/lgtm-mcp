@@ -1,16 +1,18 @@
 @prefix fibo-fi: <https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/> .
+@prefix core: <https://knuckles-team.github.io/ontology/core#> .
 @prefix fibo-org: <https://spec.edmcouncil.org/fibo/ontology/FND/Organizations/Organizations/> .
 @prefix bibo: <http://purl.org/ontology/bibo/> .
 @prefix time: <http://www.w3.org/2006/time#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix dc: <http://purl.org/dc/terms/> .
-@prefix : <http://knuckles.team/kg#> .
+@prefix : <https://knuckles-team.github.io/ontology/connector/lgtm#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 :Alert a owl:Class ;
+    rdfs:subClassOf core:Alert ;
     rdfs:label "Alert" ;
     rdfs:comment "A Grafana alert rule that fires on a threshold/condition." .
 
@@ -36,7 +38,7 @@
     rdfs:domain :Panel ;
     rdfs:range :Dashboard .
 
-<http://knuckles.team/kg/grafana> a owl:Ontology ;
+<https://knuckles-team.github.io/ontology/connector/grafana> a owl:Ontology ;
     rdfs:label "Grafana Observability Ontology" ;
     rdfs:comment """Observability extensions: Grafana dashboards, panels, alert
     rules, and datasources, plus the relations that link them and the services
@@ -46,6 +48,7 @@
 
 
 :Dashboard a owl:Class ;
+    rdfs:subClassOf core:Dashboard ;
     rdfs:label "Dashboard" ;
     rdfs:comment "A Grafana dashboard: a named collection of visualization panels." .
 
@@ -54,8 +57,9 @@
     rdfs:comment "A Grafana datasource (Prometheus, Loki, etc.) backing panels and alerts." .
 
 :Panel a owl:Class ;
+    rdfs:subClassOf core:Panel ;
     rdfs:label "Panel" ;
     rdfs:comment "A single visualization panel belonging to a Dashboard." .
 
 # connector-surface core roll-up
-<http://knuckles.team/kg#DataSource> rdfs:subClassOf <http://knuckles.team/kg#ConfigurationItem> .
+<https://knuckles-team.github.io/ontology/connector/lgtm#DataSource> rdfs:subClassOf <https://knuckles-team.github.io/ontology/core#ConfigurationItem> .

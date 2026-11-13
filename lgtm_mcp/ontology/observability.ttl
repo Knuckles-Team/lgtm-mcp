@@ -1,11 +1,12 @@
 @prefix fibo-fi: <https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/> .
+@prefix core: <https://knuckles-team.github.io/ontology/core#> .
 @prefix fibo-org: <https://spec.edmcouncil.org/fibo/ontology/FND/Organizations/Organizations/> .
 @prefix bibo: <http://purl.org/ontology/bibo/> .
 @prefix time: <http://www.w3.org/2006/time#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix dc: <http://purl.org/dc/terms/> .
-@prefix : <http://knuckles.team/kg#> .
+@prefix : <https://knuckles-team.github.io/ontology/connector/lgtm#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -14,30 +15,31 @@
     rdfs:label "LLM Generation" ;
     rdfs:comment """A Langfuse generation: an LLM-call observation (model + prompt + output)
 that is part_of a :Trace. A specialization of :Observation (CONCEPT:KG-2.156).""" ;
-    rdfs:subClassOf :Observation .
+    rdfs:subClassOf core:Observation .
 
 :HeartbeatStat a owl:Class ;
     rdfs:label "Heartbeat Stat" ;
     rdfs:comment """A single Uptime-Kuma heartbeat sample (up/down + ping) part_of a
 :UptimeMonitor — the substrate for failure-pattern analysis (CONCEPT:KG-2.159).""" ;
-    rdfs:subClassOf :Observation .
+    rdfs:subClassOf core:Observation .
 
-:Topic a owl:Class .
+:Topic a owl:Class ;
+    rdfs:subClassOf core:Topic .
 
 
 :Trace a owl:Class ;
     rdfs:label "LLM Trace" ;
     rdfs:comment """A Langfuse trace: one end-to-end LLM application invocation grouping
 its :Observation / :Generation steps (CONCEPT:KG-2.156).""" ;
-    rdfs:subClassOf :Episode .
+    rdfs:subClassOf core:Episode .
 
 :UptimeMonitor a owl:Class ;
     rdfs:label "Uptime Monitor" ;
     rdfs:comment """An Uptime-Kuma monitor (an availability probe of a service/URL) whose
 samples are :HeartbeatStat (CONCEPT:KG-2.159).""" ;
-    rdfs:subClassOf :System .
+    rdfs:subClassOf core:System .
 
-<http://knuckles.team/kg/observability> a owl:Ontology ;
+<https://knuckles-team.github.io/ontology/connector/observability> a owl:Ontology ;
     rdfs:label "Observability & Streaming Ontology" ;
     rdfs:comment "Ops/observability node types (CONCEPT:KG-2.9 / KG-2.156 / KG-2.159)." .
 
@@ -53,20 +55,20 @@ samples are :HeartbeatStat (CONCEPT:KG-2.159).""" ;
     rdfs:label "Alert Group" ;
     rdfs:comment """An Alertmanager grouping of alerts that share a label set / route
 (lgtm_get_alert_groups). Groups active :Alert instances.""" ;
-    rdfs:subClassOf :System .
+    rdfs:subClassOf core:System .
 
 :Silence a owl:Class ;
     rdfs:label "Silence" ;
     rdfs:comment """An Alertmanager silence: a time-bounded matcher set that mutes
 matching :Alert notifications (lgtm_get_silences / lgtm_create_silence).""" ;
-    rdfs:subClassOf :System .
+    rdfs:subClassOf core:System .
 
 :Receiver a owl:Class ;
     rdfs:label "Receiver" ;
     rdfs:comment """An Alertmanager receiver — a notification integration (email,
 Slack, PagerDuty, webhook) that fired :Alert instances are routed to
 (lgtm_get_receivers).""" ;
-    rdfs:subClassOf :System .
+    rdfs:subClassOf core:System .
 
 :alertState a owl:DatatypeProperty ;
     rdfs:label "alert state" ;

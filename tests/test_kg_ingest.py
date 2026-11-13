@@ -1,4 +1,4 @@
-"""Native epistemic-graph typed-node ingestion — Wire-First coverage for lgtm-mcp.
+"""Native medulla typed-node ingestion — Wire-First coverage for lgtm-mcp.
 
 Exercises the real ``ingest_entities`` / ``ingest_dashboards`` / ``ingest_alerts`` seam
 against a fake transport boundary (one level below the SDK's own request builder),
