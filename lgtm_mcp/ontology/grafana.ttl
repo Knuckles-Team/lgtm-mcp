@@ -11,11 +11,6 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-:Alert a owl:Class ;
-    rdfs:subClassOf core:Alert ;
-    rdfs:label "Alert" ;
-    rdfs:comment "A Grafana alert rule that fires on a threshold/condition." .
-
 :dashboardTitle a owl:DatatypeProperty ;
     rdfs:label "dashboard title" ;
     rdfs:comment "Human-readable title of a Dashboard or Panel." ;
@@ -27,17 +22,6 @@
     rdfs:domain :DataSource ;
     rdfs:range xsd:string .
 
-:monitors a owl:ObjectProperty ;
-    rdfs:label "monitors" ;
-    rdfs:comment "Links a Panel or Alert to the service or datasource it observes." ;
-    rdfs:domain :Panel .
-
-:partOf a owl:ObjectProperty ;
-    rdfs:label "part of" ;
-    rdfs:comment "Links a Panel to the Dashboard it belongs to." ;
-    rdfs:domain :Panel ;
-    rdfs:range :Dashboard .
-
 <https://knuckles-team.github.io/ontology/connector/grafana> a owl:Ontology ;
     rdfs:label "Grafana Observability Ontology" ;
     rdfs:comment """Observability extensions: Grafana dashboards, panels, alert
@@ -47,19 +31,9 @@
     CONCEPT:KG-2.9 — Self-registering source extractors (observability slice)""" .
 
 
-:Dashboard a owl:Class ;
-    rdfs:subClassOf core:Dashboard ;
-    rdfs:label "Dashboard" ;
-    rdfs:comment "A Grafana dashboard: a named collection of visualization panels." .
-
 :DataSource a owl:Class ;
     rdfs:label "Data Source" ;
     rdfs:comment "A Grafana datasource (Prometheus, Loki, etc.) backing panels and alerts." .
-
-:Panel a owl:Class ;
-    rdfs:subClassOf core:Panel ;
-    rdfs:label "Panel" ;
-    rdfs:comment "A single visualization panel belonging to a Dashboard." .
 
 # connector-surface core roll-up
 <https://knuckles-team.github.io/ontology/connector/lgtm#DataSource> rdfs:subClassOf <https://knuckles-team.github.io/ontology/core#ConfigurationItem> .

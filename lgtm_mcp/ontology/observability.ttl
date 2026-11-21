@@ -23,10 +23,6 @@ that is part_of a :Trace. A specialization of :Observation (CONCEPT:KG-2.156).""
 :UptimeMonitor — the substrate for failure-pattern analysis (CONCEPT:KG-2.159).""" ;
     rdfs:subClassOf core:Observation .
 
-:Topic a owl:Class ;
-    rdfs:subClassOf core:Topic .
-
-
 :Trace a owl:Class ;
     rdfs:label "LLM Trace" ;
     rdfs:comment """A Langfuse trace: one end-to-end LLM application invocation grouping
@@ -70,18 +66,6 @@ Slack, PagerDuty, webhook) that fired :Alert instances are routed to
 (lgtm_get_receivers).""" ;
     rdfs:subClassOf core:System .
 
-:alertState a owl:DatatypeProperty ;
-    rdfs:label "alert state" ;
-    rdfs:comment "The processing state of an :Alert (active, suppressed, unprocessed)." ;
-    rdfs:domain :Alert ;
-    rdfs:range xsd:string .
-
-:severity a owl:DatatypeProperty ;
-    rdfs:label "severity" ;
-    rdfs:comment "The severity label of an :Alert (e.g. critical, warning, info)." ;
-    rdfs:domain :Alert ;
-    rdfs:range xsd:string .
-
 :startsAt a owl:DatatypeProperty ;
     rdfs:label "starts at" ;
     rdfs:comment "ISO-8601 timestamp an :Alert or :Silence became active." ;
@@ -98,14 +82,8 @@ Slack, PagerDuty, webhook) that fired :Alert instances are routed to
     rdfs:domain :Silence ;
     rdfs:range xsd:string .
 
-:routedTo a owl:ObjectProperty ;
-    rdfs:label "routed to" ;
-    rdfs:comment "Links a fired :Alert to the :Receiver its notification was routed to." ;
-    rdfs:domain :Alert ;
-    rdfs:range :Receiver .
-
 :silencedBy a owl:ObjectProperty ;
     rdfs:label "silenced by" ;
     rdfs:comment "Links an :Alert to the :Silence currently muting it." ;
-    rdfs:domain :Alert ;
+    rdfs:domain core:Alert ;
     rdfs:range :Silence .
