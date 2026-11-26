@@ -1,37 +1,40 @@
 # Lgtm MCP
+## MCP
 
-[![Status](https://img.shields.io/badge/status-active-success)](https://github.com/genius-agents/lgtm-mcp)
-[![Version](https://img.shields.io/badge/version-0.15.0-blue)](pyproject.toml)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+![PyPI - Version](https://img.shields.io/pypi/v/lgtm-mcp)
+![MCP Server](https://badge.mcpx.dev?type=server 'MCP Server')
+![PyPI - Downloads](https://img.shields.io/pypi/dd/lgtm-mcp)
+![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/lgtm-mcp)
+![GitHub forks](https://img.shields.io/github/forks/Knuckles-Team/lgtm-mcp)
+![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/lgtm-mcp)
+![PyPI - License](https://img.shields.io/pypi/l/lgtm-mcp)
+![GitHub](https://img.shields.io/github/license/Knuckles-Team/lgtm-mcp)
+![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/lgtm-mcp)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/Knuckles-Team/lgtm-mcp)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/Knuckles-Team/lgtm-mcp)
+![GitHub issues](https://img.shields.io/github/issues/Knuckles-Team/lgtm-mcp)
+![GitHub top language](https://img.shields.io/github/languages/top/Knuckles-Team/lgtm-mcp)
+![GitHub language count](https://img.shields.io/github/languages/count/Knuckles-Team/lgtm-mcp)
+![GitHub repo size](https://img.shields.io/github/repo-size/Knuckles-Team/lgtm-mcp)
+![GitHub repo file count (file type)](https://img.shields.io/github/directory-file-count/Knuckles-Team/lgtm-mcp)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/lgtm-mcp)
+![PyPI - Implementation](https://img.shields.io/pypi/implementation/lgtm-mcp)
 
-LGTM Stack (Alertmanager and Grafana) system observability orchestrator. Built with the highest architectural standards, incorporating dynamic facades, custom API routing, and FastMCP tool decoration.
-
-> **Documentation** — Installation, deployment, usage across the API and MCP
-> interfaces, and guidance for provisioning the LGTM observability stack are maintained
-> in the [official documentation](https://knuckles-team.github.io/lgtm-mcp/).
-
-## Table of Contents
-- [Overview](#overview)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [MCP Tools](#mcp-tools)
-- [Architecture](#architecture)
-- [Deployment](#deployment)
-- [Documentation](#documentation)
-- [Contributing](#contributing)
-- [License](#license)
+> **Documentation** — Installation, deployment, and usage across the API, CLI, MCP,
+> and A2A agent interfaces are maintained in the
+> [official documentation](https://knuckles-team.github.io/lgtm-mcp/).
 
 ---
 
 ## Overview
 
+LGTM Stack (Alertmanager and Grafana) system observability orchestrator. Built with the highest architectural standards, incorporating dynamic facades, custom API routing, and FastMCP tool decoration.
+
 Lgtm MCP provides a high-performance, model-optimized interface to Lgtm capabilities. It isolates the model from underlying API transport complexity, ensuring safe, idempotent, and highly traceable system interactions.
 
 ---
 
-## Features
+## Key Features
 
 - **Dynamic Facade Orchestration**: Integrates multi-inheritance clients cleanly under a single facade.
 - **Battle-Tested Resilience**: Out-of-the-box credential authentication, connection polling, and request retry strategies.
@@ -40,7 +43,9 @@ Lgtm MCP provides a high-performance, model-optimized interface to Lgtm capabili
 
 ---
 
-## ⚙️ Dynamic Tool Selection & Visibility
+## MCP
+
+### Dynamic Tool Selection & Visibility
 
 This MCP server supports dynamic toolset selection and visibility filtering at runtime. This allows the operator to restrict the set of exposed tools to prevent blowing up the LLM's context window.
 
@@ -59,179 +64,7 @@ The operator can configure tool filtering via multiple input channels:
 
 When query strings or parameters are provided, an LLM-free **Knowledge Graph resolution layer** (using `DynamicToolOrchestrator`) matches query intents against known tool tags, names, or descriptions, with safe fallback and automated 24-hour background cache refreshing.
 
-
----
-
-## Installation
-
-Pick the extra that matches what the operator want to run:
-
-| Extra | Installs | Use when |
-|-------|----------|----------|
-| `lgtm-mcp[mcp]` | Connector-focused MCP server (`scion-sdk[mcp]` — FastMCP/FastAPI + `medulla[full]`) | The operator only run the **MCP server** (smallest install / image) |
-| `lgtm-mcp[agent]` | Agent runtime (`scion-sdk[agent-runtime,logfire]` — model orchestration + `medulla[full]`) | The operator run the **integrated agent** |
-| `lgtm-mcp[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
-
-```bash
-# Connector-focused MCP server (includes the shared graph engine)
-uv pip install "lgtm-mcp[mcp]"
-
-# Agent runtime (adds model orchestration to the shared graph engine)
-uv pip install "lgtm-mcp[agent]"
-
-# Everything (development)
-uv pip install "lgtm-mcp[all]"      # or: python -m pip install "lgtm-mcp[all]"
-```
-
-### Container images (`:mcp` vs `:agent`)
-
-One multi-stage `docker/Dockerfile` builds two right-sized images, selected by `--target`:
-
-| Image tag | Build target | Contents | Entrypoint |
-|-----------|--------------|----------|------------|
-| `example/lgtm-mcp:mcp` | `--target mcp` | `lgtm-mcp[mcp]` — **connector-focused**, includes `medulla[full]`; no model-orchestration stack | `lgtm-mcp` |
-| `example/lgtm-mcp@sha256:<digest>` | `--target agent` (default) | `lgtm-mcp[agent]` — **agent runtime**, model orchestration + `medulla[full]` | `lgtm-agent` |
-
-```bash
-docker build --target mcp   -t example/lgtm-mcp:mcp    docker/   # connector-focused MCP server
-docker build --target agent -t example/lgtm-mcp:agent-local docker/   # agent runtime
-```
-
-`docker/mcp.compose.yml` runs the connector-focused `:mcp` server; `docker/compose.yml` runs the
-agent (`immutable agent digest`) with a co-located `:mcp` sidecar.
-
-### Knowledge-graph database (`medulla`)
-
-Both `[mcp]` and `[agent]` carry the **medulla** engine through the required
-Meristem core dependency (`medulla[full]`). The `[mcp]` extra keeps
-the server connector-focused; `[agent]` also enables model orchestration. Local
-deployments can use the bundled engine. For production or shared state, run
-**medulla as a dedicated database service** and configure the runtime to use it.
-Deployment recipes (single-node + Raft HA), connection configuration, and architecture
-diagrams are documented in the
-[medulla deployment guide](https://knuckles-team.github.io/medulla/deployment/).
-
----
-
-## Usage
-
-The operator can start the FastMCP server in stdio mode via Python module execution:
-
-```python
-import asyncio
-from lgtm_mcp.mcp_server import get_mcp_instance
-
-
-async def main():
-    mcp = get_mcp_instance()
-    # Execute stdio loop or launch server
-    print("MCP Server ready.")
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-For direct shell start, ran:
-
-```bash
-python -m lgtm_mcp.mcp_server
-```
-
----
-
-## Environment Variables
-
-<!-- ENV-VARS-TABLE:START -->
-
-#### Package environment variables
-
-| Variable | Example | Description |
-|----------|---------|-------------|
-| `ALERTMANAGER_URL` | `http://localhost:9093` | Prometheus Alertmanager server API URL |
-| `GRAFANA_URL` | `http://localhost:3000` | Grafana server API endpoint |
-| `LGTM_TOKEN` | secret-injected | Grafana admin API Key or Service Token |
-| `LGTM_MCP_BASE_URL` | `http://localhost` | Fallback base URL used when ALERTMANAGER_URL / GRAFANA_URL are unset |
-| `LGTM_MCP_USERNAME` | — | Basic-auth username (alternative to LGTM_TOKEN) |
-| `LGTM_MCP_PASSWORD` | secret-injected | Basic-auth password (alternative to LGTM_TOKEN) |
-| `TLS_PROFILE` | `private-ca` | AgentConfig named transport profile |
-| `TLS_PROFILE_REF` | `secret://transport/provider` | Direct runtime profile reference |
-| `TLS_PROFILES_REF` | `secret://transport/catalog` | Named runtime profile catalog |
-| `ALERTMANAGERTOOL` | `True` | These names match the authoritative "Toggle Env Var" column in the README MCP tools table (condensed action-routed surface). |
-| `GRAFANATOOL` | `True` |  |
-| `LGTM_MCP_MCP_IMAGE` | — | Operator-approved immutable image@sha256 reference for the MCP Compose service |
-| `LGTM_TLS_PROFILE` | — | Optional LGTM-specific AgentConfig TLS selectors; verification stays mandatory |
-| `LGTM_TLS_PROFILE_REF` | — |  |
-
-#### Inherited scion-sdk variables (apply to every connector)
-
-| Variable | Example | Description |
-|----------|---------|-------------|
-| `TRANSPORT` | `stdio` | MCP transport: `stdio` \| `streamable-http` \| `sse` |
-| `HOST` | `127.0.0.1` | Loopback bind host (set an authenticated ingress explicitly) |
-| `PORT` | `8000` | Bind port (HTTP transports) |
-| `MCP_ENABLED_TOOLS` | — | Comma-separated tool allow-list |
-| `MCP_DISABLED_TOOLS` | — | Comma-separated tool deny-list |
-| `MCP_ENABLED_TAGS` | — | Comma-separated tag allow-list |
-| `MCP_DISABLED_TAGS` | — | Comma-separated tag deny-list |
-| `EUNOMIA_TYPE` | `none` | Authorization mode: `none` \| `embedded` \| `remote` |
-| `EUNOMIA_POLICY_FILE` | `mcp_policies.json` | Embedded Eunomia policy file |
-| `EUNOMIA_REMOTE_URL` | — | Remote Eunomia authorization server URL |
-| `ENABLE_OTEL` | `False` | Enable OpenTelemetry export |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | — | OTLP collector endpoint |
-| `MCP_CLIENT_AUTH` | — | Outbound MCP child auth: `oidc-client-credentials` \| `basic` \| `none` |
-| `OIDC_CLIENT_ID` | — | OIDC client id (service-account auth) |
-| `OIDC_CLIENT_SECRET_REF` | `secret://identity/oidc-client-secret` | Runtime secret reference for the OIDC service account |
-| `MCP_BASIC_AUTH_USERNAME` | — | HTTP Basic username (`MCP_CLIENT_AUTH=basic`) |
-| `MCP_BASIC_AUTH_PASSWORD_REF` | `secret://identity/mcp-basic-password` | Runtime secret reference for HTTP Basic auth (`MCP_CLIENT_AUTH=basic`) |
-| `DEBUG` | `False` | Verbose logging |
-| `PYTHONUNBUFFERED` | `1` | Unbuffered stdout (recommended in containers) |
-| `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
-| `PROVIDER` | — | Operator-configured LLM provider for the agent |
-| `MODEL_ID` | — | Operator-configured model id for the agent |
-| `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
-
-_14 package + 23 inherited variable(s). Auto-generated from `.env.example` + the shared scion-sdk set — do not edit._
-<!-- ENV-VARS-TABLE:END -->
-
-
-Every variable the server reads. A local template is provided inside
-[.env.example](.env.example) — copy it to `.env` and fill in the operator's endpoints/credentials.
-
-### Connection & Credentials
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `ALERTMANAGER_URL` | Prometheus Alertmanager server API URL | `http://localhost:9093` |
-| `GRAFANA_URL` | Grafana server API endpoint | `http://localhost:3000` |
-| `LGTM_TOKEN` | Grafana admin API Key or Service Token | — |
-
-### MCP server / transport
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `TRANSPORT` | `stdio`, `streamable-http`, or `sse` | `stdio` |
-| `HOST` | Bind host (HTTP transports) | `0.0.0.0` |
-| `PORT` | Bind port (HTTP transports) | `8000` |
-| `MCP_TOOL_MODE` | Tool surface: `condensed`, `verbose`, or `both` | `condensed` |
-| `MCP_ENABLED_TOOLS` / `MCP_DISABLED_TOOLS` | Comma-separated tool allow/deny list | — |
-| `MCP_ENABLED_TAGS` / `MCP_DISABLED_TAGS` | Comma-separated tag allow/deny list | — |
-| `DEBUG` | Verbose logging | `False` |
-| `PYTHONUNBUFFERED` | Unbuffered stdout (recommended in containers) | `1` |
-
-### Tool toggles
-Each action-routed tool can be disabled individually via its toggle env var (set to `false`).
-The full list is in the [MCP Tools](#mcp-tools) table above (`ALERTMANAGERTOOL`, `GRAFANATOOL`).
-
-### Agent CLI (full `[agent]` runtime only)
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `MCP_URL` | URL of the MCP server the agent connects to | `http://localhost:8000/mcp` |
-| `PROVIDER` | LLM provider (e.g. `openai`) | `openai` |
-| `MODEL_ID` | Model id (e.g. `gpt-4o`) | `gpt-4o` |
-| `ENABLE_WEB_UI` | Serve the AG-UI web interface | `True` |
-
----
-
-## MCP Tools
+### MCP Tools
 
 The following declarative FastMCP tools are registered and available to upstream AI agents:
 
@@ -251,9 +84,7 @@ _4 intent tool(s) · 0 operation(s). Call an operation as `act(action='<operatio
 
 See [docs/overview.md](docs/overview.md) or [docs/concepts.md](docs/concepts.md) for deeper operational examples.
 
----
-
-## MCP Configuration Examples
+### MCP Configuration Examples
 
 <!-- MCP-CONFIG-EXAMPLES:START -->
 
@@ -363,6 +194,8 @@ does not emit an unauthenticated non-loopback listener.
 _Auto-generated from the code-read env surface (package vars) — do not edit._
 <!-- MCP-CONFIG-EXAMPLES:END -->
 
+---
+
 ## Architecture
 
 This package uses the standardized Meristem dynamic facade architecture:
@@ -413,6 +246,177 @@ the detailed transport contract.
   `MCP_ALLOWED_HOSTS` in `AgentConfig`.
 <!-- END GENERATED: additional-deployment-options -->
 
+---
+
+## Environment Variables
+
+<!-- ENV-VARS-TABLE:START -->
+
+#### Package environment variables
+
+| Variable | Example | Description |
+|----------|---------|-------------|
+| `ALERTMANAGER_URL` | `http://localhost:9093` | Prometheus Alertmanager server API URL |
+| `GRAFANA_URL` | `http://localhost:3000` | Grafana server API endpoint |
+| `LGTM_TOKEN` | secret-injected | Grafana admin API Key or Service Token |
+| `LGTM_MCP_BASE_URL` | `http://localhost` | Fallback base URL used when ALERTMANAGER_URL / GRAFANA_URL are unset |
+| `LGTM_MCP_USERNAME` | — | Basic-auth username (alternative to LGTM_TOKEN) |
+| `LGTM_MCP_PASSWORD` | secret-injected | Basic-auth password (alternative to LGTM_TOKEN) |
+| `TLS_PROFILE` | `private-ca` | AgentConfig named transport profile |
+| `TLS_PROFILE_REF` | `secret://transport/provider` | Direct runtime profile reference |
+| `TLS_PROFILES_REF` | `secret://transport/catalog` | Named runtime profile catalog |
+| `ALERTMANAGERTOOL` | `True` | These names match the authoritative "Toggle Env Var" column in the README MCP tools table (condensed action-routed surface). |
+| `GRAFANATOOL` | `True` |  |
+| `LGTM_MCP_MCP_IMAGE` | — | Operator-approved immutable image@sha256 reference for the MCP Compose service |
+| `LGTM_TLS_PROFILE` | — | Optional LGTM-specific AgentConfig TLS selectors; verification stays mandatory |
+| `LGTM_TLS_PROFILE_REF` | — |  |
+
+#### Inherited scion-sdk variables (apply to every connector)
+
+| Variable | Example | Description |
+|----------|---------|-------------|
+| `TRANSPORT` | `stdio` | MCP transport: `stdio` \| `streamable-http` \| `sse` |
+| `HOST` | `127.0.0.1` | Loopback bind host (set an authenticated ingress explicitly) |
+| `PORT` | `8000` | Bind port (HTTP transports) |
+| `MCP_ENABLED_TOOLS` | — | Comma-separated tool allow-list |
+| `MCP_DISABLED_TOOLS` | — | Comma-separated tool deny-list |
+| `MCP_ENABLED_TAGS` | — | Comma-separated tag allow-list |
+| `MCP_DISABLED_TAGS` | — | Comma-separated tag deny-list |
+| `EUNOMIA_TYPE` | `none` | Authorization mode: `none` \| `embedded` \| `remote` |
+| `EUNOMIA_POLICY_FILE` | `mcp_policies.json` | Embedded Eunomia policy file |
+| `EUNOMIA_REMOTE_URL` | — | Remote Eunomia authorization server URL |
+| `ENABLE_OTEL` | `False` | Enable OpenTelemetry export |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | — | OTLP collector endpoint |
+| `MCP_CLIENT_AUTH` | — | Outbound MCP child auth: `oidc-client-credentials` \| `basic` \| `none` |
+| `OIDC_CLIENT_ID` | — | OIDC client id (service-account auth) |
+| `OIDC_CLIENT_SECRET_REF` | `secret://identity/oidc-client-secret` | Runtime secret reference for the OIDC service account |
+| `MCP_BASIC_AUTH_USERNAME` | — | HTTP Basic username (`MCP_CLIENT_AUTH=basic`) |
+| `MCP_BASIC_AUTH_PASSWORD_REF` | `secret://identity/mcp-basic-password` | Runtime secret reference for HTTP Basic auth (`MCP_CLIENT_AUTH=basic`) |
+| `DEBUG` | `False` | Verbose logging |
+| `PYTHONUNBUFFERED` | `1` | Unbuffered stdout (recommended in containers) |
+| `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
+| `PROVIDER` | — | Operator-configured LLM provider for the agent |
+| `MODEL_ID` | — | Operator-configured model id for the agent |
+| `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
+
+_14 package + 23 inherited variable(s). Auto-generated from `.env.example` + the shared scion-sdk set — do not edit._
+<!-- ENV-VARS-TABLE:END -->
+
+
+Every variable the server reads. A local template is provided inside
+[.env.example](.env.example) — copy it to `.env` and fill in the operator's endpoints/credentials.
+
+### Connection & Credentials
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `ALERTMANAGER_URL` | Prometheus Alertmanager server API URL | `http://localhost:9093` |
+| `GRAFANA_URL` | Grafana server API endpoint | `http://localhost:3000` |
+| `LGTM_TOKEN` | Grafana admin API Key or Service Token | — |
+
+### MCP server / transport
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `TRANSPORT` | `stdio`, `streamable-http`, or `sse` | `stdio` |
+| `HOST` | Bind host (HTTP transports) | `0.0.0.0` |
+| `PORT` | Bind port (HTTP transports) | `8000` |
+| `MCP_TOOL_MODE` | Tool surface: `condensed`, `verbose`, or `both` | `condensed` |
+| `MCP_ENABLED_TOOLS` / `MCP_DISABLED_TOOLS` | Comma-separated tool allow/deny list | — |
+| `MCP_ENABLED_TAGS` / `MCP_DISABLED_TAGS` | Comma-separated tag allow/deny list | — |
+| `DEBUG` | Verbose logging | `False` |
+| `PYTHONUNBUFFERED` | Unbuffered stdout (recommended in containers) | `1` |
+
+### Tool toggles
+Each action-routed tool can be disabled individually via its toggle env var (set to `false`).
+The full list is in the [MCP Tools](#mcp-tools) table above (`ALERTMANAGERTOOL`, `GRAFANATOOL`).
+
+### Agent CLI (full `[agent]` runtime only)
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `MCP_URL` | URL of the MCP server the agent connects to | `http://localhost:8000/mcp` |
+| `PROVIDER` | LLM provider (e.g. `openai`) | `openai` |
+| `MODEL_ID` | Model id (e.g. `gpt-4o`) | `gpt-4o` |
+| `ENABLE_WEB_UI` | Serve the AG-UI web interface | `True` |
+
+---
+
+## Installation
+
+Pick the extra that matches what the operator want to run:
+
+| Extra | Installs | Use when |
+|-------|----------|----------|
+| `lgtm-mcp[mcp]` | Connector-focused MCP server (`scion-sdk[mcp]` — FastMCP/FastAPI + `medulla[full]`) | The operator only run the **MCP server** (smallest install / image) |
+| `lgtm-mcp[agent]` | Agent runtime (`scion-sdk[agent-runtime,logfire]` — model orchestration + `medulla[full]`) | The operator run the **integrated agent** |
+| `lgtm-mcp[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
+
+```bash
+# Connector-focused MCP server (includes the shared graph engine)
+uv pip install "lgtm-mcp[mcp]"
+
+# Agent runtime (adds model orchestration to the shared graph engine)
+uv pip install "lgtm-mcp[agent]"
+
+# Everything (development)
+uv pip install "lgtm-mcp[all]"      # or: python -m pip install "lgtm-mcp[all]"
+```
+
+### Container images (`:mcp` vs `:agent`)
+
+One multi-stage `docker/Dockerfile` builds two right-sized images, selected by `--target`:
+
+| Image tag | Build target | Contents | Entrypoint |
+|-----------|--------------|----------|------------|
+| `example/lgtm-mcp:mcp` | `--target mcp` | `lgtm-mcp[mcp]` — **connector-focused**, includes `medulla[full]`; no model-orchestration stack | `lgtm-mcp` |
+| `example/lgtm-mcp@sha256:<digest>` | `--target agent` (default) | `lgtm-mcp[agent]` — **agent runtime**, model orchestration + `medulla[full]` | `lgtm-agent` |
+
+```bash
+docker build --target mcp   -t example/lgtm-mcp:mcp    docker/   # connector-focused MCP server
+docker build --target agent -t example/lgtm-mcp:agent-local docker/   # agent runtime
+```
+
+`docker/mcp.compose.yml` runs the connector-focused `:mcp` server; `docker/compose.yml` runs the
+agent (`immutable agent digest`) with a co-located `:mcp` sidecar.
+
+### Knowledge-graph database (`medulla`)
+
+Both `[mcp]` and `[agent]` carry the **medulla** engine through the required
+Meristem core dependency (`medulla[full]`). The `[mcp]` extra keeps
+the server connector-focused; `[agent]` also enables model orchestration. Local
+deployments can use the bundled engine. For production or shared state, run
+**medulla as a dedicated database service** and configure the runtime to use it.
+Deployment recipes (single-node + Raft HA), connection configuration, and architecture
+diagrams are documented in the
+[medulla deployment guide](https://knuckles-team.github.io/medulla/deployment/).
+
+---
+
+## Usage
+
+The operator can start the FastMCP server in stdio mode via Python module execution:
+
+```python
+import asyncio
+from lgtm_mcp.mcp_server import get_mcp_instance
+
+
+async def main():
+    mcp = get_mcp_instance()
+    # Execute stdio loop or launch server
+    print("MCP Server ready.")
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+For direct shell start, ran:
+
+```bash
+python -m lgtm_mcp.mcp_server
+```
+
+---
+
 ## Documentation
 
 The complete documentation is published as the
@@ -430,7 +434,16 @@ recommended reference for installation, deployment, and day-to-day operation.
 
 ---
 
-## Contributing
+## Repository Owners
+
+<img width="100%" height="180em" src="https://github-readme-stats.vercel.app/api?username=example&show_icons=true&hide_border=true&&count_private=true&include_all_commits=true" />
+
+![GitHub followers](https://img.shields.io/github/followers/example)
+![GitHub User's stars](https://img.shields.io/github/stars/example)
+
+---
+
+## Contribute
 
 Please audit all code changes against the repository's contribution and review requirements, and run:
 
@@ -443,7 +456,6 @@ pre-commit run --all-files
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for complete details.
-
 
 <!-- BEGIN scion-sdk-deployment (generated; do not edit between markers) -->
 
