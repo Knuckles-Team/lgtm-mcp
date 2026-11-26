@@ -2,12 +2,7 @@
 name: lgtm-alertmanager-alerts
 skill_type: skill
 description: >-
-  Alertmanager alert and silence operations over the lgtm-mcp MCP server — list
-  active/silenced alerts and alert groups, read cluster status and receivers, and
-  create/read/delete silences to mute noisy alerts. Use when the agent must triage
-  firing alerts, understand routing/receivers, or silence an alert during
-  maintenance. Do NOT use for Grafana dashboards or datasource queries (use
-  lgtm-grafana-dashboards).
+  Alertmanager alert and silence operations over the lgtm-mcp MCP server — list active/silenced alerts and alert groups, read cluster status and receivers, and create/read/delete silences to mute noisy alerts. Use when the agent must triage firing alerts, understand routing/receivers, or silence an alert during maintenance.
 license: MIT
 tags: [lgtm, alertmanager, alerts, silences, observability, mcp]
 metadata:
@@ -15,6 +10,8 @@ metadata:
   version: '0.1.0'
 ---
 # LGTM Alertmanager Alerts
+
+Scope: Alertmanager alert and silence operations over the lgtm-mcp MCP server — list active/silenced alerts and alert groups, read cluster status and receivers, and create/read/delete silences to mute noisy alerts. Use when the agent must triage firing alerts, understand routing/receivers, or silence an alert during maintenance. Do NOT use for Grafana dashboards or datasource queries (use lgtm-grafana-dashboards).
 
 Domain-typed access to **Alertmanager** (v2 API) via the `lgtm-mcp` MCP server:
 alert triage, alert-group inspection, receiver/status reads, and the silence
@@ -42,6 +39,22 @@ Connect via the `mcp-client` skill against the **`lgtm-mcp`** MCP server.
 | `LGTM_MCP_USERNAME` / `LGTM_MCP_PASSWORD` | one of | Basic-auth instead of a token |
 | `LGTM_MCP_SSL_VERIFY` | optional | TLS verification toggle |
 
+
+## Steps
+
+1. Check connectivity with `lgtm_get_status`, and verify it returns cluster status rather than an auth or connection error.
+2. Triage with `lgtm_get_alerts`(`active`, `silenced`, `inhibited`, `filter`), and verify the response lists alerts with `fingerprint` values.
+3. Inspect routing with `lgtm_get_alert_groups` and `lgtm_get_receivers`, and verify each alert maps to a receiver.
+4. Silence only when asked: call `lgtm_create_silence`(`matchers`, `starts_at`, `ends_at`, `comment`, `created_by`), and verify the returned silence id appears in `lgtm_get_silences`.
+5. Expire a silence with `lgtm_delete_silence`(`silence_id`), and verify `lgtm_get_silence` shows it expired.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| Authentication or connection error | `ALERTMANAGER_URL` or credentials (`LGTM_TOKEN`, or `LGTM_MCP_USERNAME` with `LGTM_MCP_PASSWORD`) missing | Set `ALERTMANAGER_URL` and one credential form, then call `lgtm_get_status` again |
+| Silence rejected | `matchers` given as strings or timestamps not RFC-3339 UTC | Pass matchers as objects with `name`, `value`, `isRegex`, and UTC timestamps such as `2026-07-04T00:00:00Z` |
+| Empty alert list | `filter` too narrow or states excluded | Pass `filter` as `name=value` strings and set `active`, `silenced`, `inhibited` as intended |
 
 ## Tools
 One typed tool per operation; pass each argument by name.

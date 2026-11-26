@@ -19,6 +19,22 @@ Use the provider's governed MCP tools through Arbora delegation.
 5. Ingest source data only through the signed connector preset and ChangeEnvelope path.
 6. Verify the durable result and its trace/evidence before reporting completion.
 
+## Steps
+
+1. Discover tools in the verified GraphSession and tenant with `find`(intent="alertmanager alerts"), and verify the tool names you plan to use are listed.
+2. Inspect first with `lgtm_get_status` and `lgtm_get_alerts` or `lgtm_get_dashboards`, and verify the current state matches the request.
+3. Run the approved change, such as `lgtm_create_silence` or `lgtm_create_dashboard`, after presenting its impact, and verify the response status.
+4. For destructive actions such as `lgtm_delete_silence`, obtain explicit approval first, and verify the result with `lgtm_get_silences`.
+5. Push state to the graph with `lgtm_ingest_alerts` or `lgtm_ingest_dashboards` only when asked, and verify the response reports ingested items.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| Tool or schema not found | Stale tool name assumed | Rerun `find` for the operation and use the schema it returns |
+| Request denied | Session or tenant lacks the needed scope | Stop and ask the operator for the scope, since ACL state is never bypassed |
+| Connection error from `lgtm_get_status` | `ALERTMANAGER_URL` or `GRAFANA_URL` unset or wrong | Set the base URL and credentials named in the domain skill, then call `lgtm_get_status` again |
+
 ## Safety contract
 
 - Never persist credentials, endpoints, raw personal identifiers, hostnames, or local paths.
